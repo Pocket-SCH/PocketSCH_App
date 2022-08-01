@@ -56,8 +56,8 @@ class Home extends StatelessWidget {
               width: width / 2,
               child: ElevatedButton(
                 onPressed: () {
-                  // 임시로 alarm으로 이동하게 했습니다. 개발하면서 변경하셔도 좋아요!
-                  Get.toNamed('alarm');
+                  // 임시로 alarm으로 이동하게 했습니다. 개발하면서 변경하셔도 좋아요!  + bus로 변경
+                  Get.toNamed('bus');
                 },
                 child: Padding(
                     padding: EdgeInsets.fromLTRB(20, 5, 30, 5),

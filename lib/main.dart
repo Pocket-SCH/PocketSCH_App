@@ -5,6 +5,7 @@ import 'package:pocket_sch/splash.dart';
 import 'package:pocket_sch/view/bus/alarm/alarm_add_page.dart';
 import 'package:pocket_sch/view/bus/alarm/alarm_page.dart';
 import 'package:pocket_sch/view/bus/alarm/runAlarm.dart';
+import 'package:pocket_sch/view/bus/bus_choice.dart';
 import 'package:pocket_sch/view/bus/bus_home.dart';
 import 'package:pocket_sch/view/eat_home.dart';
 import 'package:pocket_sch/view/notify_home.dart';
@@ -31,7 +32,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/bus', page: () => BusHome()),
         GetPage(name: '/eat', page: () => EatHome()),
         GetPage(name: '/alarm', page: () => AlarmPage()),
-        GetPage(name: '/alarmAdd', page: () => AlarmAddPage())
+        GetPage(name: '/alarmAdd', page: () => AlarmAddPage()),
+        GetPage(name: '/busChoice', page: () => BusChoice())
       ],
     );
   }
