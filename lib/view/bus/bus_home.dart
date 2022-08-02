@@ -54,91 +54,93 @@ class _BusHomeState extends State<BusHome> {
                 height: 15,
               ),
               // 사각형 2 - 흰색 그림자
-              Container(
-                width: double.infinity,
+              Expanded(
+                child: Container(
+                  width: double.infinity,
 
-                child: Card(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    side: BorderSide(
-                      color: Colors.grey.withOpacity(0.3),
-                      width: 1,
+                  child: Card(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                      side: BorderSide(
+                        color: Colors.grey.withOpacity(0.3),
+                        width: 1,
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.all(25),
-                        width: screen_width * 0.85,
-                        height: screen_height * 0.12,
-                        decoration:
-                            BoxDecoration(color: const Color(0xff87aaaa)),
-                        child: Container(
-                          margin: EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment
-                                .center, //center로 하는게 나을지 start가 나을지..
-                            children: [
-                              Text("현재 시간",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500)),
-                              Text("시간 나오는 곳",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.w400)),
-                            ],
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.all(25),
+                          width: screen_width * 0.85,
+                          height: screen_height * 0.12,
+                          decoration:
+                              BoxDecoration(color: const Color(0xff87aaaa)),
+                          child: Container(
+                            margin: EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment
+                                  .center, //center로 하는게 나을지 start가 나을지..
+                              children: [
+                                Text("현재 시간",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500)),
+                                Text("시간 나오는 곳",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.w400)),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      //사각형 4
-                      Container(
-                        margin: EdgeInsets.fromLTRB(25, 0, 25, 0),
-                        width: screen_width * 0.85,
-                        height: screen_height * 0.35,
-                        decoration:
-                            BoxDecoration(color: const Color(0xffd8fffe)),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      getAlarmBox(screen_width, screen_height),
+                        //사각형 4
+                        Container(
+                          margin: EdgeInsets.fromLTRB(25, 0, 25, 0),
+                          width: screen_width * 0.85,
+                          height: screen_height * 0.35,
+                          decoration:
+                              BoxDecoration(color: const Color(0xffd8fffe)),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        getAlarmBox(screen_width, screen_height),
 
-                      SizedBox(
-                        height: 15,
-                      ),
-                      getBusBox("학내순환"),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      getBusBox("신창역 셔틀"),
-                      SizedBox(
-                        height: 30,
-                      ),
-                    ],
+                        SizedBox(
+                          height: 15,
+                        ),
+                        getBusBox("학내순환"),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        getBusBox("신창역 셔틀"),
+                        SizedBox(
+                          height: 30,
+                        ),
+                      ],
+                    ),
                   ),
+
+                  // height: screen_height * 0.85,
+                  // decoration: BoxDecoration(
+                  //     borderRadius: BorderRadius.all(Radius.circular(12)),
+                  //     boxShadow: [
+                  //       BoxShadow(
+                  //           color: const Color(0x29000000),
+                  //           offset: Offset(0, 0),
+                  //           blurRadius: 6,
+                  //           spreadRadius: 0)
+                  //     ],
+                  //     color: const Color(0xffffffff)),
+                  // child: Column(
+                  //   // mainAxisAlignment: MainAxisAlignment.center,
+
+                  // )
                 ),
-
-                // height: screen_height * 0.85,
-                // decoration: BoxDecoration(
-                //     borderRadius: BorderRadius.all(Radius.circular(12)),
-                //     boxShadow: [
-                //       BoxShadow(
-                //           color: const Color(0x29000000),
-                //           offset: Offset(0, 0),
-                //           blurRadius: 6,
-                //           spreadRadius: 0)
-                //     ],
-                //     color: const Color(0xffffffff)),
-                // child: Column(
-                //   // mainAxisAlignment: MainAxisAlignment.center,
-
-                // )
-              )
+              ),
             ],
           ),
         ),
