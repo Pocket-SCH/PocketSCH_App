@@ -4,10 +4,14 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:pocket_sch/model/alarm.dart';
 import '../../../custom_color.dart';
+import '../../home.dart';
 import 'alarm_add_page.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+
+import 'localData.dart';
 
 List times = [
   {"시간": "10:00", "요일": "화", "상태": false},
@@ -31,8 +35,20 @@ class AlarmPage extends StatefulWidget {
 }
 
 class _AlarmPageState extends State<AlarmPage> {
+// 로컬 저장소 객체
+  late LocalData localData;
+  @override
+  void initState() {
+    super.initState();
+    // 알람 로컬 저장소 객체 초기화
+    localData = LocalData();
+    localData.init();
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(localData.alarmList.toString());
+
     return Scaffold(
       backgroundColor: CustomColor.background,
       appBar: AppBar(
@@ -129,7 +145,8 @@ class _AlarmPageState extends State<AlarmPage> {
 
   Widget _buildList() {
     return Column(
-      children: times.mapIndexed((idx, e) {
+      children: localData.alarmListState.mapIndexed((idx, e) {
+        print(idx);
         return _buildListItem(e, idx);
       }).toList(),
     );
@@ -153,25 +170,35 @@ class _AlarmPageState extends State<AlarmPage> {
     //   }
   }
 
-  void doNothing(BuildContext context) {}
+  doNothing(BuildContext context, Alarm item) {
+    print(111);
+    // setState(() {
+    //   localData.alarmListState.remove(item);
+    //   localData.remove(alarm: item);
+    // });
+  }
+
   // 알람을 리스트로 출력
   Widget _buildListItem(item, idx) {
     return Slidable(
       key: Key(idx.toString()),
       endActionPane: ActionPane(
         // dragDismissible: true,
+        
         extentRatio: 0.2,
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
             autoClose: true,
-            onPressed: doNothing,
+            onPressed: doNothing(context, item),
             backgroundColor: Color(0xFFFE4A49),
             foregroundColor: Colors.white,
             label: '삭제',
+            
           ),
         ],
       ),
+      
       child: Card(
           child: Container(
               height: 40,
@@ -191,7 +218,7 @@ class _AlarmPageState extends State<AlarmPage> {
                     width: MediaQuery.of(context).size.width * 0.2,
                     child: Center(
                       child: Text(
-                        item["요일"],
+                        item.byDay.toString(),
                         style: TextStyle(
                           color: Color(0xff444444),
                           fontSize: 15,
@@ -215,7 +242,7 @@ class _AlarmPageState extends State<AlarmPage> {
                         color: const Color(0xffffffff)),
                     child: Center(
                         child: Text(
-                      item["시간"],
+                      item.time.toString(),
                       style: TextStyle(
                         color: Color(0xff444444),
                         fontSize: 15,
@@ -226,23 +253,22 @@ class _AlarmPageState extends State<AlarmPage> {
                   SizedBox(
                     width: 10,
                   ),
-                  _getActivatedSwitch(item),
+                  _getActivatedSwitch(item, idx),
                 ],
               ))),
     );
   }
 
-  _getActivatedSwitch(item) {
+  _getActivatedSwitch(item, idx) {
     return CupertinoSwitch(
-      value: item["상태"],
+      value: item.activated,
       activeColor: Color(0xff9bd8d2),
       onChanged: (value) {
         setState(() {
-          if (item["상태"] == true) {
-            item["상태"] = false;
-          } else {
-            item["상태"] = true;
-          }
+          localData.onChangedActivated(
+            activated: value,
+            index: idx,
+          );
         });
       },
     );
