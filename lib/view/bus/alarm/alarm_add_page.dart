@@ -1,9 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
+import 'package:pocket_sch/view/home.dart';
 
 import '../../../custom_color.dart';
+import '../../../model/alarm.dart';
+import 'localData.dart';
 
 class AlarmAddPage extends StatefulWidget {
   const AlarmAddPage({Key? key}) : super(key: key);
@@ -13,7 +17,19 @@ class AlarmAddPage extends StatefulWidget {
 }
 
 class _AlarmAddPageState extends State<AlarmAddPage> {
+  // 로컬 저장소 객체
+  late LocalData localData;
+  @override
+  void initState() {
+    super.initState();
+    // 알람 로컬 저장소 객체 초기화
+    localData = LocalData();
+    localData.init();
+  }
+
   List<bool> categoryPicked = [true, false, false, false, false];
+  String currentByDay = "월";
+
   List<String> times = [
     "10:00",
     "10:10",
@@ -22,7 +38,17 @@ class _AlarmAddPageState extends State<AlarmAddPage> {
     "10:40",
     "10:50",
     "11:00",
-    "11:10"
+    "11:00",
+    "11:00",
+    "11:00",
+    "11:00",
+    "11:00",
+    "11:00",
+    "11:00",
+    "11:00",
+    "11:00",
+    "11:00",
+    "11:00",
   ];
 
   Widget backButton() {
@@ -165,16 +191,15 @@ class _AlarmAddPageState extends State<AlarmAddPage> {
   }
 
   Widget getByDayToggle() {
-    return Row(children: <Widget>[
-      SizedBox(
-        width: 18,
-      ),
-      getByDayBox(0, '월'),
-      getByDayBox(1, '화'),
-      getByDayBox(2, '수'),
-      getByDayBox(3, '목'),
-      getByDayBox(4, '금'),
-    ]);
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          getByDayBox(0, '월'),
+          getByDayBox(1, '화'),
+          getByDayBox(2, '수'),
+          getByDayBox(3, '목'),
+          getByDayBox(4, '금'),
+        ]);
   }
 
   Widget getByDayBox(int categoryNum, String categoryName) {
@@ -182,51 +207,45 @@ class _AlarmAddPageState extends State<AlarmAddPage> {
       child: Stack(
         alignment: AlignmentDirectional.center,
         children: [
-          Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: Container(
-                  width: MediaQuery.of(context).size.width / 7,
-                  height: MediaQuery.of(context).size.height / 20,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                      boxShadow: [
-                        BoxShadow(
-                            color: const Color(0x29000000),
-                            offset: Offset(0, 1),
-                            blurRadius: 2,
-                            spreadRadius: 0)
-                      ],
-                      color: const Color(0xffeeeeee)),
-                  child: Center(
-                    child: Text(
-                      categoryName,
-                      style: const TextStyle(
-                          color: const Color(0xff9ba4a1),
-                          fontWeight: FontWeight.w500,
-                          fontFamily: "Roboto",
-                          fontStyle: FontStyle.normal,
-                          fontSize: 18),
-                    ),
-                  ))),
+          Container(
+              width: MediaQuery.of(context).size.width / 7,
+              height: MediaQuery.of(context).size.height / 20,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(6)),
+                  boxShadow: [
+                    BoxShadow(
+                        color: const Color(0x29000000),
+                        offset: Offset(0, 1),
+                        blurRadius: 2,
+                        spreadRadius: 0)
+                  ],
+                  color: const Color(0xffeeeeee)),
+              child: Center(
+                child: Text(
+                  categoryName,
+                  style: const TextStyle(
+                      color: const Color(0xff9ba4a1),
+                      fontWeight: FontWeight.w500,
+                      fontFamily: "Roboto",
+                      fontStyle: FontStyle.normal,
+                      fontSize: 18),
+                ),
+              )),
           AnimatedOpacity(
             opacity: categoryPicked[categoryNum] ? 1.0 : 0.0, // 2
             duration: Duration(milliseconds: 100),
             child: Stack(
               alignment: AlignmentDirectional.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width / 7,
-                    height: MediaQuery.of(context).size.height / 20,
-                    decoration: BoxDecoration(
-                      color: Color(0xffb7e3df),
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                    ),
+                Container(
+                  width: MediaQuery.of(context).size.width / 7,
+                  height: MediaQuery.of(context).size.height / 20,
+                  decoration: BoxDecoration(
+                    color: Color(0xffb7e3df),
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(left: 8),
                   child: Text(
                     categoryName,
                     style: const TextStyle(
@@ -248,6 +267,8 @@ class _AlarmAddPageState extends State<AlarmAddPage> {
             categoryPicked[i] = false;
           }
           categoryPicked[categoryNum] = true;
+
+          currentByDay = categoryName;
         });
       },
     );
@@ -286,7 +307,10 @@ class _AlarmAddPageState extends State<AlarmAddPage> {
                     color: const Color(0xffffffff)),
               ),
             ),
-            _buildList()
+            RefreshIndicator(
+                onRefresh: refresh,
+                child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical, child: _buildList())),
           ],
         ),
       ),
@@ -312,12 +336,10 @@ class _AlarmAddPageState extends State<AlarmAddPage> {
   Widget _buildList() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Center(
-        child: Column(
-          children: times.map((e) {
-            return _buildListItem(e);
-          }).toList(),
-        ),
+      child: Column(
+        children: times.map((e) {
+          return _buildListItem(e);
+        }).toList(),
       ),
     );
     //   // 버스 시간표가 없으면
@@ -341,14 +363,79 @@ class _AlarmAddPageState extends State<AlarmAddPage> {
 
   // 버스 시간표를 리스트로 출력
   Widget _buildListItem(item) {
-    return Text(
-      item,
-      style: const TextStyle(
-          color: const Color(0xff444444),
-          fontWeight: FontWeight.w500,
-          fontFamily: "Roboto",
-          fontStyle: FontStyle.normal,
-          fontSize: 18),
+    return Column(
+      children: [
+        ListTile(
+          // dense:true,
+          title: Text(
+            item,
+            style: const TextStyle(
+                color: const Color(0xff444444),
+                fontWeight: FontWeight.w500,
+                fontFamily: "Roboto",
+                fontStyle: FontStyle.normal,
+                fontSize: 18),
+          ),
+          subtitle: Text("신창역 -> 순천향대 후문"),
+          trailing: IconButton(
+            alignment: Alignment.centerRight,
+            icon: Icon(Icons.add),
+            onPressed: () {
+              print(11);
+              Alarm alarm = Alarm(
+                currentByDay,
+                item,
+                true,
+              );
+
+              localData.save(alarm: alarm, context: context);
+            },
+          ),
+        ),
+        Divider(thickness: 1)
+      ],
     );
+    // return Column(
+    //   children: [
+    //     Row(
+    //       children: [
+    //         SizedBox(
+    //           child: Text(
+    //             item,
+    //             style: const TextStyle(
+    //                 color: const Color(0xff444444),
+    //                 fontWeight: FontWeight.w500,
+    //                 fontFamily: "Roboto",
+    //                 fontStyle: FontStyle.normal,
+    //                 fontSize: 18),
+    //           ),
+    //         ),
+    //         _getAddButton(),
+    //       ],
+    //     ),
+    //     Divider(thickness: 1)
+    //   ],
+    // );
+  }
+
+// 시간 추가 버튼 객체를 반환하는 함수
+  _getAddButton() {
+    return CupertinoButton(
+      child: Text(
+        "추가",
+        style: const TextStyle(
+            fontFamily: "Roboto", fontStyle: FontStyle.normal, fontSize: 16),
+      ),
+      onPressed: () {},
+    );
+  }
+
+  // build 업데이트
+  Future refresh() async {
+    await Future.delayed(Duration(seconds: 1)); //thread sleep 같은 역할을 함.
+
+    setState(() {
+      // build 업데이트
+    });
   }
 }
