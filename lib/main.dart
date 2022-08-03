@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/get.dart';
@@ -8,10 +9,21 @@ import 'package:pocket_sch/view/bus/alarm/runAlarm.dart';
 import 'package:pocket_sch/view/bus/bus_choice.dart';
 import 'package:pocket_sch/view/bus/bus_home.dart';
 import 'package:pocket_sch/view/eat_home.dart';
-import 'package:pocket_sch/view/notify_home.dart';
+import 'package:pocket_sch/view/notify/notify_home.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
-void main() {
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  var fcmToken = await FirebaseMessaging.instance.getToken(vapidKey: "fcm 인증 키");
+  print(fcmToken);
+
   runApp(const MyApp());
   runAlarm();
 }
