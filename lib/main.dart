@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/get.dart';
+import 'package:pocket_sch/controller/alarm_controller.dart';
 import 'package:pocket_sch/splash.dart';
 import 'package:pocket_sch/view/bus/alarm/alarm_add_page.dart';
 import 'package:pocket_sch/view/bus/alarm/alarm_page.dart';
@@ -15,13 +16,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  var fcmToken = await FirebaseMessaging.instance.getToken(vapidKey: "fcm 인증 키");
+  var fcmToken =
+      await FirebaseMessaging.instance.getToken(vapidKey: "fcm 인증 키");
   print(fcmToken);
 
   runApp(const MyApp());
@@ -43,7 +44,12 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/notify', page: () => NotifyHome()),
         GetPage(name: '/bus', page: () => BusHome()),
         GetPage(name: '/eat', page: () => EatHome()),
-        GetPage(name: '/alarm', page: () => AlarmPage()),
+        GetPage(
+            name: '/alarm',
+            page: () => AlarmPage(),
+            binding: BindingsBuilder(() {
+              Get.lazyPut<AlarmController>(() => AlarmController());
+            })),
         GetPage(name: '/alarmAdd', page: () => AlarmAddPage()),
         GetPage(name: '/busChoice', page: () => BusChoice())
       ],
