@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 import 'package:pocket_sch/view/home.dart';
 
+import '../../../controller/alarm_controller.dart';
 import '../../../custom_color.dart';
 import '../../../model/alarm.dart';
 import 'localData.dart';
@@ -17,6 +18,8 @@ class AlarmAddPage extends StatefulWidget {
 }
 
 class _AlarmAddPageState extends State<AlarmAddPage> {
+  AlarmController _alarmController = Get.put(AlarmController());
+
   // 로컬 저장소 객체
   late LocalData localData;
   @override
@@ -388,7 +391,9 @@ class _AlarmAddPageState extends State<AlarmAddPage> {
                 true,
               );
 
-              localData.save(alarm: alarm, context: context);
+              _alarmController.alarmUpdate(alarm: alarm, context: context);
+
+              // localData.save(alarm: alarm, context: context);
             },
           ),
         ),

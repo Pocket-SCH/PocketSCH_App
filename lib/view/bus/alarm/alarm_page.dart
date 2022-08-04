@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:pocket_sch/controller/alarm_controller.dart';
 import 'package:pocket_sch/model/alarm.dart';
 import '../../../custom_color.dart';
+import '../../../main.dart';
 import '../../home.dart';
 import 'alarm_add_page.dart';
 import 'package:collection/collection.dart';
@@ -35,20 +39,19 @@ class AlarmPage extends StatefulWidget {
 }
 
 class _AlarmPageState extends State<AlarmPage> {
+  AlarmController _alarmController = Get.put(AlarmController());
+
 // 로컬 저장소 객체
-  late LocalData localData;
+
   @override
   void initState() {
     super.initState();
     // 알람 로컬 저장소 객체 초기화
-    localData = LocalData();
-    localData.init();
+    _alarmController.init();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(localData.alarmList.toString());
-
     return Scaffold(
       backgroundColor: CustomColor.background,
       appBar: AppBar(
@@ -126,10 +129,13 @@ class _AlarmPageState extends State<AlarmPage> {
 
   Widget buildBody() {
     // StreamBuilder를 통해 알람 업데이트
+
+    // localData.init();
     // return StreamBuilder(
-    //   stream:
+    //   stream: Alarm,
     //   builder: (BuildContext context, AsyncSnapshot snapshot) {
     //     if (snapshot.hasError) return Text("Error: ${snapshot.error}");
+    //     print(snapshot);
     //     switch (snapshot.connectionState) {
     //       case ConnectionState.waiting:
     //         return Center(
@@ -143,35 +149,41 @@ class _AlarmPageState extends State<AlarmPage> {
     // );
   }
 
-  Widget _buildList() {
-    return Column(
-      children: localData.alarmListState.mapIndexed((idx, e) {
-        print(idx);
-        return _buildListItem(e, idx);
-      }).toList(),
-    );
-    // 1.
-    //   // 알람이 없으면
-    //   if (snapshot.length == 0) {
-    //     return Column(children: [
-    //       SizedBox(
-    //         height: 10,
-    //       ),
-    //       Text("버스 시간표가 없습니다."),
-    //     ]);
+  // final Stream<LocalData> _bids = (() {
+  //   late final StreamController<LocalData> controller;
+  //   controller = StreamController<LocalData>(
+  //     onListen: () async {
+  //       await localData.init();
+  //       controller.add([""])
+  //     },
+  //   );
+  //   print(controller.stream);
 
-    //     // 알람이 있으면
-    //   } else {
-    //     return Column(
-    //       children: snapshot.map((DocumentSnapshot document) {
-    //         return _buildListItem(context, document);
-    //       }).toList(),
-    //     );
-    //   }
+  //   return controller.stream;
+  // })();
+
+  // Widget _buildList() {
+  //   return Column(
+  //     children: localData.alarmListState.mapIndexed((idx, e) {
+  //       print(idx);
+  //       return _buildListItem(e, idx);
+  //     }).toList(),
+  //   );
+
+  // }
+
+  _buildList() {
+    return GetBuilder<AlarmController>(builder: (controller) {
+      return Column(
+        children: controller.alarmController.mapIndexed((idx, e) {
+          print(idx);
+          return _buildListItem(e, idx);
+        }).toList(),
+      );
+    });
   }
 
-  doNothing(BuildContext context, Alarm item) {
-    print(111);
+  doNothing(BuildContext context) {
     // setState(() {
     //   localData.alarmListState.remove(item);
     //   localData.remove(alarm: item);
@@ -184,21 +196,19 @@ class _AlarmPageState extends State<AlarmPage> {
       key: Key(idx.toString()),
       endActionPane: ActionPane(
         // dragDismissible: true,
-        
+
         extentRatio: 0.2,
         motion: const ScrollMotion(),
         children: [
           SlidableAction(
             autoClose: true,
-            onPressed: doNothing(context, item),
+            onPressed: doNothing(context),
             backgroundColor: Color(0xFFFE4A49),
             foregroundColor: Colors.white,
             label: '삭제',
-            
           ),
         ],
       ),
-      
       child: Card(
           child: Container(
               height: 40,
@@ -265,10 +275,7 @@ class _AlarmPageState extends State<AlarmPage> {
       activeColor: Color(0xff9bd8d2),
       onChanged: (value) {
         setState(() {
-          localData.onChangedActivated(
-            activated: value,
-            index: idx,
-          );
+          _alarmController.onChangedActivated(activated: value, index: idx);
         });
       },
     );
