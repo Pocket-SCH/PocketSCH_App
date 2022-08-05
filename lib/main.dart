@@ -1,7 +1,6 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
 import 'package:get/get.dart';
+import 'package:pocket_sch/controller/token_controller.dart';
 import 'package:pocket_sch/splash.dart';
 import 'package:pocket_sch/view/bus/alarm/alarm_add_page.dart';
 import 'package:pocket_sch/view/bus/alarm/alarm_page.dart';
@@ -12,6 +11,7 @@ import 'package:pocket_sch/view/eat_home.dart';
 import 'package:pocket_sch/view/notify/notify_home.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'controller/alarm_controller.dart';
 import 'firebase_options.dart';
 import 'package:http/http.dart' as http;
 import 'package:is_first_run/is_first_run.dart';
@@ -21,10 +21,12 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  var fcmToken =
-      await FirebaseMessaging.instance.getToken(vapidKey: "fcm 인증 키");
+  //토큰 컨트롤러 초기화
+  Get.put(TokenController());
+  //토큰 값 초기화 및 앱 최초 실행 확인
+  //만약 최초 실행이라면 서버에 토큰 등록
+  var fcmToken = await Get.find<TokenController>().getToken();
   bool firstRun = await IsFirstRun.isFirstRun();
-  print(firstRun);
   if(firstRun)
     regTokenPost(fcmToken!);
   runApp(const MyApp());
@@ -46,10 +48,15 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/notify', page: () => NotifyHome()),
         GetPage(name: '/bus', page: () => BusHome()),
         GetPage(name: '/eat', page: () => EatHome()),
-        GetPage(name: '/alarm', page: () => AlarmPage()),
+        GetPage(
+            name: '/alarm',
+            page: () => AlarmPage(),
+            binding: BindingsBuilder(() {
+              Get.lazyPut<AlarmController>(() => AlarmController());
+            })),
         GetPage(name: '/alarmAdd', page: () => AlarmAddPage()),
         GetPage(name: '/busChoice', page: () => BusChoice())
-      ],
+      ]
     );
   }
 }
