@@ -13,17 +13,20 @@ import 'package:pocket_sch/view/notify/notify_home.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart' as http;
+import 'package:is_first_run/is_first_run.dart';
 
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  var fcmToken = await FirebaseMessaging.instance.getToken(vapidKey: "fcm 인증 키");
-  print(fcmToken);
-
+  var fcmToken =
+      await FirebaseMessaging.instance.getToken(vapidKey: "fcm 인증 키");
+  bool firstRun = await IsFirstRun.isFirstRun();
+  print(firstRun);
+  if(firstRun)
+    regTokenPost(fcmToken!);
   runApp(const MyApp());
   runAlarm();
 }
@@ -48,5 +51,22 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/busChoice', page: () => BusChoice())
       ],
     );
+  }
+}
+
+regTokenPost(String token) async {
+  final uri =
+      Uri.parse('http://13.209.200.114:8080/pocket-sch/v1/token/register');
+
+  var headers = {'Authorization': token};
+  var request = http.Request('POST', uri);
+
+  request.headers.addAll(headers);
+  http.StreamedResponse response = await request.send();
+
+  if (response.statusCode == 200) {
+    print('Success');
+  } else {
+    print(response.statusCode);
   }
 }
