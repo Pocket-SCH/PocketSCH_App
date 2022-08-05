@@ -19,7 +19,7 @@ class LocalData {
 
   init() async {
     prefs = await SharedPreferences.getInstance();
-    
+
     alarmList = prefs.getStringList('alarmList') ?? [];
 
     alarmList.forEach((element) {
@@ -33,42 +33,40 @@ class LocalData {
     });
   }
 
-
-
   // 알람 저장
-  save({
-    required Alarm alarm,
-    required BuildContext context,
-  }) async {
-    // 알람 객체 갱신
-    alarmList.add(alarm.toString());
-    alarmListState.add(alarm);
-    // 로컬 저장소 갱신
-    await prefs.setStringList('alarmList', alarmList);
+  // save({
+  //   required Alarm alarm,
+  //   required BuildContext context,
+  // }) async {
+  //   // 알람 객체 갱신
+  //   alarmList.add(alarm.toString());
+  //   alarmListState.add(alarm);
+  //   // 로컬 저장소 갱신
+  //   await prefs.setStringList('alarmList', alarmList);
 
-    print(alarmList);
-  }
+  //   print(alarmList);
+  // }
 
-  // 알람 삭제
-  remove({required Alarm alarm}) {
-    // 알람 객체 삭제
-    alarmList.remove(alarm.toString());
-    alarmListState.remove(alarm);
-    // 로컬 저장소 갱신
-    prefs.setStringList('alarmList', alarmList);
-    prefs.clear();
-  }
+  // // 알람 삭제
+  // remove({required Alarm alarm}) {
+  //   // 알람 객체 삭제
+  //   alarmList.remove(alarm.toString());
+  //   alarmListState.remove(alarm);
+  //   // 로컬 저장소 갱신
+  //   prefs.setStringList('alarmList', alarmList);
+  //   prefs.clear();
+  // }
 
-  // 활성화 상태 onChanged 핸들러
-  onChangedActivated({required bool activated, required int index}) {
-    // 기존 알람 객체
-    Alarm alarm = alarmListState[index];
-    // 활성화 상태 변경
-    alarm.activated = activated;
-    // 알람 객체 갱신
-    alarmList[index] = alarm.toString();
-    alarmListState[index] = alarm;
-    // 로컬 저장소 갱신
-    prefs.setStringList('alarmList', alarmList);
-  }
+  // // 활성화 상태 onChanged 핸들러
+  // onChangedActivated({required bool activated, required int index}) {
+  //   // 기존 알람 객체
+  //   Alarm alarm = alarmListState[index];
+  //   // 활성화 상태 변경
+  //   alarm.activated = activated;
+  //   // 알람 객체 갱신
+  //   alarmList[index] = alarm.toString();
+  //   alarmListState[index] = alarm;
+  //   // 로컬 저장소 갱신
+  //   prefs.setStringList('alarmList', alarmList);
+  // }
 }
