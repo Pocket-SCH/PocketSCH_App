@@ -36,7 +36,7 @@ class AlarmController extends GetxController {
   }
 
   // 알람 저장
-  alarmUpdate({
+  save({
     required Alarm alarm,
     required BuildContext context,
   }) async {

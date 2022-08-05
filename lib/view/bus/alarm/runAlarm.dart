@@ -8,6 +8,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'alarm_page.dart';
 import 'globalVariable.dart';
+import 'localData.dart';
 
 class RunAlarm extends StatefulWidget {
   const RunAlarm({Key? key}) : super(key: key);
@@ -56,29 +57,33 @@ runAlarm() {
     context = GlobalVariable.navigatorState.currentContext;
   });
 
+  // 1분마다 갱신
   return Timer.periodic(const Duration(minutes: 1), (timer) async {
     // 로컬 데이터 가져오기
-    // LocalData _localData = LocalData();
-    // await _localData.init();
+    LocalData _localData = LocalData();
+    await _localData.init();
+
     // 활성화된 알람 시간 리스트
     List<String> _activatedTimeList = [];
     List<String> _activatedByDayList = [];
     // 로컬 데이터에서 활성화된 알람 리스트만 찾아 추가
-    times.forEach((item) {
-      print(item);
-      if (item["상태"]) {
-        _activatedTimeList.add(item["시간"]);
-        _activatedByDayList.add(item["요일"]);
+    _localData.alarmListState.forEach((item) {
+      // print("알람 시간 : $item");
+      if (item.activated) {
+        _activatedTimeList.add(item.time);
+        _activatedByDayList.add(item.byDay);
       }
+
+
     });
 
     DateTime now = DateTime.now();
     initializeDateFormatting('ko_KR');
     final _currentTime = DateFormat('k:mm').format(now).toString();
     final _currentByDay = DateFormat.E('ko_KR').format(now).toString();
-    print(_currentByDay);
-    print("123$_currentTime");
-    print("3444$_activatedTimeList");
+    print('금일 날짜 : $_currentByDay');
+    print("현재 시각 : $_currentTime");
+    print("활성화된 알람 : $_activatedTimeList");
     // 알람 시간인 경우
     if (_activatedByDayList.contains(_currentByDay) &&
         _activatedTimeList.contains(_currentTime)) {

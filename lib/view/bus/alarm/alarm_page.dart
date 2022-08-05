@@ -2,34 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:pocket_sch/controller/alarm_controller.dart';
-import 'package:pocket_sch/model/alarm.dart';
 import '../../../custom_color.dart';
-import '../../../main.dart';
-import '../../home.dart';
-import 'alarm_add_page.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-
-import 'localData.dart';
-
-List times = [
-  {"시간": "10:00", "요일": "화", "상태": false},
-  {"시간": "12:00", "요일": "화", "상태": false},
-  {"시간": "15:00", "요일": "수", "상태": false},
-  {"시간": "19:21", "요일": "금", "상태": false},
-  {"시간": "19:23", "요일": "금", "상태": false},
-  {"시간": "19:24", "요일": "금", "상태": false},
-  {"시간": "19:28", "요일": "금", "상태": false},
-  {"시간": "19:29", "요일": "금", "상태": false},
-  {"시간": "19:31", "요일": "금", "상태": false},
-  {"시간": "19:33", "요일": "금", "상태": false},
-  {"시간": "16:59", "요일": "금", "상태": false}
-];
 
 class AlarmPage extends StatefulWidget {
   const AlarmPage({Key? key}) : super(key: key);
@@ -128,87 +105,34 @@ class _AlarmPageState extends State<AlarmPage> {
   }
 
   Widget buildBody() {
-    // StreamBuilder를 통해 알람 업데이트
-
-    // localData.init();
-    // return StreamBuilder(
-    //   stream: Alarm,
-    //   builder: (BuildContext context, AsyncSnapshot snapshot) {
-    //     if (snapshot.hasError) return Text("Error: ${snapshot.error}");
-    //     print(snapshot);
-    //     switch (snapshot.connectionState) {
-    //       case ConnectionState.waiting:
-    //         return Center(
-    //             child: CircularProgressIndicator(
-    //           color: Colors.green,
-    //         ));
-    //       default:
     return _buildList();
-    //     }
-    //   },
-    // );
   }
-
-  // final Stream<LocalData> _bids = (() {
-  //   late final StreamController<LocalData> controller;
-  //   controller = StreamController<LocalData>(
-  //     onListen: () async {
-  //       await localData.init();
-  //       controller.add([""])
-  //     },
-  //   );
-  //   print(controller.stream);
-
-  //   return controller.stream;
-  // })();
-
-  // Widget _buildList() {
-  //   return Column(
-  //     children: localData.alarmListState.mapIndexed((idx, e) {
-  //       print(idx);
-  //       return _buildListItem(e, idx);
-  //     }).toList(),
-  //   );
-
-  // }
 
   _buildList() {
     return GetBuilder<AlarmController>(builder: (controller) {
+      if (controller.alarmController.length == 0) {
+        return Center(
+          child: Text("알람을 설정하세요!"),
+        );
+      }
       return Column(
         children: controller.alarmController.mapIndexed((idx, e) {
-          print(idx);
           return _buildListItem(e, idx);
         }).toList(),
       );
     });
   }
 
-  doNothing(BuildContext context) {
-    // setState(() {
-    //   localData.alarmListState.remove(item);
-    //   localData.remove(alarm: item);
-    // });
-  }
-
   // 알람을 리스트로 출력
   Widget _buildListItem(item, idx) {
-    return Slidable(
-      key: Key(idx.toString()),
-      endActionPane: ActionPane(
-        // dragDismissible: true,
-
-        extentRatio: 0.2,
-        motion: const ScrollMotion(),
-        children: [
-          SlidableAction(
-            autoClose: true,
-            onPressed: doNothing(context),
-            backgroundColor: Color(0xFFFE4A49),
-            foregroundColor: Colors.white,
-            label: '삭제',
-          ),
-        ],
-      ),
+    return Dismissible(
+      key: UniqueKey(),
+      background: Container(color: Colors.red),
+      onDismissed: (direction) {
+        setState(() {
+          _alarmController.remove(alarm: item);
+        });
+      },
       child: Card(
           child: Container(
               height: 40,

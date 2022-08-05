@@ -391,7 +391,7 @@ class _AlarmAddPageState extends State<AlarmAddPage> {
                 true,
               );
 
-              _alarmController.alarmUpdate(alarm: alarm, context: context);
+              _alarmController.save(alarm: alarm, context: context);
 
               // localData.save(alarm: alarm, context: context);
             },
