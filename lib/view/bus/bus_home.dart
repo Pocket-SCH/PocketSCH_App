@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:date_format/date_format.dart';
+import 'package:timer_builder/timer_builder.dart';
 
 import '../../custom_color.dart';
 
@@ -13,6 +18,7 @@ class BusHome extends StatefulWidget {
 }
 
 class _BusHomeState extends State<BusHome> {
+  File? _image;
   @override
   Widget build(BuildContext context) {
     double screen_width = MediaQuery.of(context).size.width;
@@ -57,7 +63,6 @@ class _BusHomeState extends State<BusHome> {
               Expanded(
                 child: Container(
                   width: double.infinity,
-
                   child: Card(
                     color: Colors.white,
                     shape: RoundedRectangleBorder(
@@ -86,29 +91,46 @@ class _BusHomeState extends State<BusHome> {
                                         color: Colors.white,
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500)),
-                                Text("시간 나오는 곳",
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                TimerBuilder.periodic(
+                                    const Duration(seconds: 1),
+                                    builder: (context) {
+                                  return Text(
+                                    formatDate(DateTime.now(),
+                                        [hh, ':', nn, ':', ss, ' ', am]),
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 40,
-                                        fontWeight: FontWeight.w400)),
+                                    style: const TextStyle(
+                                      fontSize: 40,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  );
+                                })
                               ],
                             ),
                           ),
                         ),
-                        //사각형 4
-                        Container(
-                          margin: EdgeInsets.fromLTRB(25, 0, 25, 0),
-                          width: screen_width * 0.85,
-                          height: screen_height * 0.35,
-                          decoration:
-                              BoxDecoration(color: const Color(0xffd8fffe)),
+                        SizedBox(
+                          height: screen_height * 0.32,
+                          width: screen_width * 0.80,
+                          child: _image == null
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                      color: const Color(0xffd8fffe)),
+                                )
+                              : Image.file(File(_image!.path)),
+                        ),
+                        IconButton(
+                          onPressed: selectFromGallery,
+                          icon: Icon(Icons.collections_outlined),
+                          iconSize: 20,
                         ),
                         SizedBox(
                           height: 15,
                         ),
                         getAlarmBox(screen_width, screen_height),
-
                         SizedBox(
                           height: 15,
                         ),
@@ -123,22 +145,6 @@ class _BusHomeState extends State<BusHome> {
                       ],
                     ),
                   ),
-
-                  // height: screen_height * 0.85,
-                  // decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.all(Radius.circular(12)),
-                  //     boxShadow: [
-                  //       BoxShadow(
-                  //           color: const Color(0x29000000),
-                  //           offset: Offset(0, 0),
-                  //           blurRadius: 6,
-                  //           spreadRadius: 0)
-                  //     ],
-                  //     color: const Color(0xffffffff)),
-                  // child: Column(
-                  //   // mainAxisAlignment: MainAxisAlignment.center,
-
-                  // )
                 ),
               ),
             ],
@@ -214,5 +220,14 @@ class _BusHomeState extends State<BusHome> {
         ),
       ),
     );
+  }
+
+  selectFromGallery() async {
+    XFile? ximage = await ImagePicker().pickImage(source: ImageSource.gallery);
+    File image = File(ximage!.path);
+    if (image == null) return;
+    setState(() {
+      _image = image;
+    });
   }
 }
