@@ -11,6 +11,7 @@ import 'package:pocket_sch/view/eat_home.dart';
 import 'package:pocket_sch/view/notify/notify_home.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:pocket_sch/view/notify/notify_regkeyword.dart';
 import 'controller/alarm_controller.dart';
 import 'firebase_options.dart';
 import 'package:http/http.dart' as http;
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         //다른 페이지로 파라미터를 간단하게 넘길 때 사용
         //이름 뒤에 /:사용할 파라미터명 적으면 됨
-        GetPage(name: '/notify', page: () => NotifyHome()),
+        GetPage(name: '/notify', page: () => NotifyRegKeyword()),
         GetPage(name: '/bus', page: () => BusHome()),
         GetPage(name: '/eat', page: () => EatHome()),
         GetPage(
