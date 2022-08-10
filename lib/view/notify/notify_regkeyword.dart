@@ -19,6 +19,12 @@ class _NotifyRegKeywordState extends State<NotifyRegKeyword> {
   List<RegKeyword> keyList = [];
 
   @override
+  void initState() {
+    loadKeyword();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
 
@@ -165,7 +171,7 @@ class _NotifyRegKeywordState extends State<NotifyRegKeyword> {
     };
     var request = http.Request('POST',
         Uri.parse('http://13.209.200.114:8080/pocket-sch/v1/info/keywords'));
-    request.body = json.encode({"keyword": "data"});
+    request.body = json.encode({"keyword": data});
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
