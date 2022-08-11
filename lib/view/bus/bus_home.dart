@@ -1,12 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:date_format/date_format.dart';
 import 'package:timer_builder/timer_builder.dart';
+import 'package:http/http.dart' as http;
 
+import '../../controller/token_controller.dart';
 import '../../custom_color.dart';
 
 //버스 페이지 홈
@@ -19,6 +21,12 @@ class BusHome extends StatefulWidget {
 
 class _BusHomeState extends State<BusHome> {
   File? _image;
+
+  void initState() {
+    super.initState();
+    ImageGetRequest();
+  }
+
   @override
   Widget build(BuildContext context) {
     double screen_width = MediaQuery.of(context).size.width;
@@ -41,7 +49,6 @@ class _BusHomeState extends State<BusHome> {
         padding: const EdgeInsets.all(10.0),
         child: Center(
           child: Column(
-            // mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               RichText(
                   text: TextSpan(children: const <TextSpan>[
@@ -115,7 +122,7 @@ class _BusHomeState extends State<BusHome> {
                         SizedBox(
                           height: screen_height * 0.32,
                           width: screen_width * 0.80,
-                          child: _image == null
+                          child: _image == null //가져오는 이미지가 없을 경우
                               ? Container(
                                   decoration: BoxDecoration(
                                       color: const Color(0xffd8fffe)),
@@ -124,7 +131,7 @@ class _BusHomeState extends State<BusHome> {
                         ),
                         IconButton(
                           onPressed: selectFromGallery,
-                          icon: Icon(Icons.collections_outlined),
+                          icon: Icon(Icons.image_outlined),
                           iconSize: 20,
                         ),
                         SizedBox(
@@ -229,5 +236,45 @@ class _BusHomeState extends State<BusHome> {
     setState(() {
       _image = image;
     });
+    await ImagePostRequest(File(image.path));
+  }
+
+  //이미지 전달 POST
+  Future ImagePostRequest(File image) async {
+    var headers = {'Authorization': Get.find<TokenController>().token};
+    var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            'http://13.209.200.114:8080/pocket-sch/v1/bus/image/image-upload'));
+    request.files.add(await http.MultipartFile.fromPath('file', image.path));
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      print(await response.stream.bytesToString());
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
+//이미지 가져오기 GET
+  Future ImageGetRequest() async {
+    var headers = {'Authorization': Get.find<TokenController>().token};
+    var request = http.MultipartRequest(
+        'GET',
+        Uri.parse(
+            'http://13.209.200.114:8080/pocket-sch/v1/bus/image/my-image'));
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      // print(await response.stream.bytesToString());
+      // String s=base64.encode(response.stream);
+
+    } else {
+      print(response.reasonPhrase);
+    }
   }
 }
