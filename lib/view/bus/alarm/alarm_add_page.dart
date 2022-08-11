@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:pocket_sch/controller/bus_timeTable_controller.dart';
 import 'package:pocket_sch/view/home.dart';
 
 import '../../../controller/alarm_controller.dart';
@@ -19,6 +21,8 @@ class AlarmAddPage extends StatefulWidget {
 
 class _AlarmAddPageState extends State<AlarmAddPage> {
   AlarmController _alarmController = Get.put(AlarmController());
+  BusTimeTableController _busTimeTableController =
+      Get.put(BusTimeTableController());
 
   // 로컬 저장소 객체
   late LocalData localData;
@@ -26,6 +30,8 @@ class _AlarmAddPageState extends State<AlarmAddPage> {
   void initState() {
     super.initState();
     // 알람 로컬 저장소 객체 초기화
+    _busTimeTableController.getBusTimeTable(1);
+
     localData = LocalData();
     localData.init();
   }
@@ -264,11 +270,14 @@ class _AlarmAddPageState extends State<AlarmAddPage> {
           ),
         ],
       ),
-      onTap: () {
+      onTap: () async {
+        await _busTimeTableController.getBusTimeTable(categoryNum);
+
         setState(() {
           for (int i = 0; i < 5; i++) {
             categoryPicked[i] = false;
           }
+
           categoryPicked[categoryNum] = true;
 
           currentByDay = categoryName;
@@ -318,60 +327,39 @@ class _AlarmAddPageState extends State<AlarmAddPage> {
         ),
       ),
     );
-    // StreamBuilder를 통해 요일별 버스 시간표 업데이트
-    // return StreamBuilder(
-    //   stream:
-    //   builder: (BuildContext context, AsyncSnapshot snapshot) {
-    //     if (snapshot.hasError) return Text("Error: ${snapshot.error}");
-    //     switch (snapshot.connectionState) {
-    //       case ConnectionState.waiting:
-    //         return Center(
-    //             child: CircularProgressIndicator(
-    //           color: Colors.green,
-    //         ));
-    //       default:
-    //         return _buildList();
-    //     }
-    //   },
-    // );
   }
 
-  Widget _buildList() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: times.map((e) {
-          return _buildListItem(e);
-        }).toList(),
-      ),
-    );
-    //   // 버스 시간표가 없으면
-    //   if (snapshot.length == 0) {
-    //     return Column(children: [
-    //       SizedBox(
-    //         height: 10,
-    //       ),
-    //       Text("버스 시간표가 없습니다."),
-    //     ]);
-
-    //     // 버스 시간표가 있으면
-    //   } else {
-    //     return Column(
-    //       children: snapshot.map((DocumentSnapshot document) {
-    //         return _buildListItem(context, document);
-    //       }).toList(),
-    //     );
-    //   }
+  _buildList() {
+    return GetBuilder<BusTimeTableController>(builder: (controller) {
+      print(controller);
+      if (controller.busTimeTableController.length == 0) {
+        return Center(
+          child: Text("버스가 없습니다ㅠ"),
+        );
+      }
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: controller.busTimeTableController.map((e) {
+            return _buildListItem(e);
+          }).toList(),
+        ),
+      );
+    });
   }
 
   // 버스 시간표를 리스트로 출력
   Widget _buildListItem(item) {
+    var formatter = DateFormat('HH:mm');
+    DateTime busTimeParse = DateTime.parse(item.busTime);
+    String busTime = formatter.format(busTimeParse);
+    print(busTime);
     return Column(
       children: [
         ListTile(
           // dense:true,
           title: Text(
-            item,
+            busTime,
             style: const TextStyle(
                 color: const Color(0xff444444),
                 fontWeight: FontWeight.w500,
@@ -379,15 +367,14 @@ class _AlarmAddPageState extends State<AlarmAddPage> {
                 fontStyle: FontStyle.normal,
                 fontSize: 18),
           ),
-          subtitle: Text("신창역 -> 순천향대 후문"),
+          // subtitle: Text("신창역 -> 순천향대 후문"),
           trailing: IconButton(
             alignment: Alignment.centerRight,
             icon: Icon(Icons.add),
             onPressed: () {
-              print(11);
               Alarm alarm = Alarm(
                 currentByDay,
-                item,
+                busTime,
                 true,
               );
 

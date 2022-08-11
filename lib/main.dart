@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pocket_sch/controller/bus_timeTable_controller.dart';
 import 'package:pocket_sch/controller/token_controller.dart';
+import 'package:pocket_sch/model/bus_timeTable.dart';
 import 'package:pocket_sch/splash.dart';
 import 'package:pocket_sch/view/bus/alarm/alarm_add_page.dart';
 import 'package:pocket_sch/view/bus/alarm/alarm_page.dart';
@@ -28,8 +30,7 @@ void main() async {
   //만약 최초 실행이라면 서버에 토큰 등록
   var fcmToken = await Get.find<TokenController>().getToken();
   bool firstRun = await IsFirstRun.isFirstRun();
-  if(firstRun)
-    regTokenPost(fcmToken!);
+  if (firstRun) regTokenPost(fcmToken!);
   runApp(const MyApp());
   runAlarm();
 }
@@ -41,24 +42,29 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Splash(),
-      getPages: [
-        //다른 페이지로 파라미터를 간단하게 넘길 때 사용
-        //이름 뒤에 /:사용할 파라미터명 적으면 됨
-        GetPage(name: '/notify', page: () => NotifyRegKeyword()),
-        GetPage(name: '/bus', page: () => BusHome()),
-        GetPage(name: '/eat', page: () => EatHome()),
-        GetPage(
-            name: '/alarm',
-            page: () => AlarmPage(),
-            binding: BindingsBuilder(() {
-              Get.lazyPut<AlarmController>(() => AlarmController());
-            })),
-        GetPage(name: '/alarmAdd', page: () => AlarmAddPage()),
-        GetPage(name: '/busChoice', page: () => BusChoice())
-      ]
-    );
+        debugShowCheckedModeBanner: false,
+        home: Splash(),
+        getPages: [
+          //다른 페이지로 파라미터를 간단하게 넘길 때 사용
+          //이름 뒤에 /:사용할 파라미터명 적으면 됨
+          GetPage(name: '/notify', page: () => NotifyRegKeyword()),
+          GetPage(name: '/bus', page: () => BusHome()),
+          GetPage(name: '/eat', page: () => EatHome()),
+          GetPage(
+              name: '/alarm',
+              page: () => AlarmPage(),
+              binding: BindingsBuilder(() {
+                Get.lazyPut<AlarmController>(() => AlarmController());
+              })),
+          GetPage(
+              name: '/alarmAdd',
+              page: () => AlarmAddPage(),
+              binding: BindingsBuilder(() {
+                Get.lazyPut<BusTimeTableController>(
+                    () => BusTimeTableController());
+              })),
+          GetPage(name: '/busChoice', page: () => BusChoice())
+        ]);
   }
 }
 
