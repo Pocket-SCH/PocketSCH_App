@@ -1,5 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui';
+
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -141,11 +146,11 @@ class _BusHomeState extends State<BusHome> {
                         SizedBox(
                           height: 15,
                         ),
-                        getBusBox("학내순환"),
+                        getSchoolBusBox("학내순환"),
                         SizedBox(
                           height: 15,
                         ),
-                        getBusBox("신창역 셔틀"),
+                        getStationBusBox("신창역 셔틀"),
                         SizedBox(
                           height: 30,
                         ),
@@ -182,13 +187,62 @@ class _BusHomeState extends State<BusHome> {
     );
   }
 
-  Widget getBusBox(String str) {
+//학내 순환
+  Widget getSchoolBusBox(String str) {
     double w = 335;
     double h = 60;
 
     return InkWell(
       onTap: () {
-        Get.toNamed('busChoice');
+        Get.toNamed('schoolbusChoice');
+      },
+      child: Container(
+        width: w,
+        height: h,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            boxShadow: [
+              BoxShadow(
+                  color: const Color(0x29000000),
+                  offset: Offset(0, 0),
+                  blurRadius: 6,
+                  spreadRadius: 0)
+            ],
+            color: Color(0xffb9e2e2)),
+        child: Row(
+          children: [
+            Container(
+              width: w * 0.3,
+              child: Center(child: Text(str)),
+            ),
+            Container(
+              width: w * 0.7,
+              child: Container(
+                margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(5),
+                        topRight: Radius.circular(5))),
+                child: Column(
+                  children: [Text("후문정류장에서"), Text("2분 뒤 출발")],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+//신창역 셔틀
+  Widget getStationBusBox(String str) {
+    double w = 335;
+    double h = 60;
+
+    return InkWell(
+      onTap: () {
+        Get.toNamed('stationbusChoice');
       },
       child: Container(
         width: w,
@@ -270,9 +324,14 @@ class _BusHomeState extends State<BusHome> {
     http.StreamedResponse response = await request.send();
 
     if (response.statusCode == 200) {
-      // print(await response.stream.bytesToString());
-      // String s=base64.encode(response.stream);
-
+      Uint8List imageInUnit8List = await response.stream.toBytes();
+      final tempDir = await getTemporaryDirectory();
+      File file = await File('${tempDir.path}/image.png').create();
+      file.writeAsBytesSync(imageInUnit8List);
+      setState(() {
+        file.writeAsBytesSync(imageInUnit8List);
+        _image = file;
+      });
     } else {
       print(response.reasonPhrase);
     }

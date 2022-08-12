@@ -3,14 +3,14 @@ import 'package:get/get.dart';
 
 import '../../custom_color.dart';
 
-class BusChoice extends StatefulWidget {
-  const BusChoice({Key? key}) : super(key: key);
+class StationBusChoice extends StatefulWidget {
+  const StationBusChoice({Key? key}) : super(key: key);
 
   @override
-  State<BusChoice> createState() => _BusChoiceState();
+  State<StationBusChoice> createState() => _StationBusChoiceState();
 }
 
-class _BusChoiceState extends State<BusChoice> {
+class _StationBusChoiceState extends State<StationBusChoice> {
   @override
   Widget build(BuildContext context) {
     double screen_width = MediaQuery.of(context).size.width;
@@ -44,7 +44,7 @@ class _BusChoiceState extends State<BusChoice> {
                         color: Colors.white)),
                 TextSpan(text: ' '),
                 TextSpan(
-                    text: '버스',
+                    text: '신창역 셔틀 버스',
                     style: TextStyle(color: Colors.black, fontSize: 18))
               ])),
               SizedBox(
@@ -67,15 +67,15 @@ class _BusChoiceState extends State<BusChoice> {
                         SizedBox(
                           height: 15,
                         ),
-                        getBusBox("2분 뒤 출발", "10:10 후문 정류장 출발"),
+                        getBusBox("2분 뒤 출발", "12:10 후문 정류장 출발"),
                         SizedBox(
                           height: 15,
                         ),
-                        getBusBox("2분 뒤 출발", "10:20 후문 정류장 출발"),
+                        getBusBox("2분 뒤 출발", "12:20 후문 정류장 출발"),
                         SizedBox(
                           height: 15,
                         ),
-                        getBusBox("2분 뒤 출발", "10:30 후문 정류장 출발"),
+                        getBusBox("2분 뒤 출발", "12:30 후문 정류장 출발"),
                         SizedBox(
                           height: 30,
                         ),

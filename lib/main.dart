@@ -7,8 +7,9 @@ import 'package:pocket_sch/splash.dart';
 import 'package:pocket_sch/view/bus/alarm/alarm_add_page.dart';
 import 'package:pocket_sch/view/bus/alarm/alarm_page.dart';
 import 'package:pocket_sch/view/bus/alarm/runAlarm.dart';
-import 'package:pocket_sch/view/bus/bus_choice.dart';
+import 'package:pocket_sch/view/bus/schoolbus_choice.dart';
 import 'package:pocket_sch/view/bus/bus_home.dart';
+import 'package:pocket_sch/view/bus/stationbus_choice.dart';
 import 'package:pocket_sch/view/eat_home.dart';
 import 'package:pocket_sch/view/notify/notify_home.dart';
 import 'package:flutter/services.dart';
@@ -63,7 +64,8 @@ class MyApp extends StatelessWidget {
                 Get.lazyPut<BusTimeTableController>(
                     () => BusTimeTableController());
               })),
-          GetPage(name: '/busChoice', page: () => BusChoice())
+          GetPage(name: '/schoolbusChoice', page: () => SchoolBusChoice()),
+          GetPage(name: '/stationbusChoice', page: () => StationBusChoice())
         ]);
   }
 }
