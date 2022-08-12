@@ -7,6 +7,7 @@ import 'package:pocket_sch/controller/token_controller.dart';
 import 'package:pocket_sch/custom_color.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+
 class NotifyRegKeyword extends StatefulWidget {
   const NotifyRegKeyword({Key? key}) : super(key: key);
 
@@ -111,12 +112,13 @@ class _NotifyRegKeywordState extends State<NotifyRegKeyword> {
                                                 Size(width / 15, width / 15),
                                             shape: CircleBorder()),
                                         onPressed: () {
-                                          if(_addKeywordController.text.length >= 2)
-                                            {regKeyword(
+                                          if (_addKeywordController.text.length >= 2) {
+                                            regKeyword(
                                                 _addKeywordController.text);
-                                            _addKeywordController.clear();}
-                                          else
-                                            Fluttertoast.showToast(msg: '최소 2글자 이상 입력해주세요');
+                                            _addKeywordController.clear();
+                                          } else
+                                            Fluttertoast.showToast(
+                                                msg: '최소 2글자 이상 입력해주세요');
                                         },
                                         child: Icon(Icons.add))
                                   ],
@@ -133,26 +135,33 @@ class _NotifyRegKeywordState extends State<NotifyRegKeyword> {
                                 thickness: 1,
                                 color: Color(0xff707070),
                               ),
-                              Obx(()=>ListView.builder(
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: _keyList.length,
-                                itemBuilder: (BuildContext context, index) {
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(_keyList[index].keyword, style: TextStyle(fontSize: 15)),
-                                    Transform.scale(
-                                      scale: 0.7,
-                                      child: IconButton(
-                                        onPressed: (){
-                                        deleteKeyword(_keyList[index].id.toString(), _keyList[index].keyword);
-                                      }, icon: Image.asset('assets/btn_delete.png')),
-                                    )
-
-                                  ],
-                                );
-                              }))
+                              Obx(() => ListView.builder(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: _keyList.length,
+                                  itemBuilder: (BuildContext context, index) {
+                                    return Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(_keyList[index].keyword,
+                                            style: TextStyle(fontSize: 15)),
+                                        Transform.scale(
+                                          scale: 0.7,
+                                          child: IconButton(
+                                              onPressed: () {
+                                                deleteKeyword(
+                                                    _keyList[index]
+                                                        .id
+                                                        .toString(),
+                                                    _keyList[index].keyword);
+                                              },
+                                              icon: Image.asset(
+                                                  'assets/btn_delete.png')),
+                                        )
+                                      ],
+                                    );
+                                  }))
                             ])),
                   ),
                 ),
@@ -167,7 +176,7 @@ class _NotifyRegKeywordState extends State<NotifyRegKeyword> {
   //서버에 키워드 등록
   regKeyword(String data) async {
     var headers = {
-      'Authorization': '${Get.find<TokenController>().token}',
+      'Authorization': '${TokenController.to.token}',
       'Content-Type': 'application/json'
     };
     var request = http.Request('POST',
@@ -185,12 +194,10 @@ class _NotifyRegKeywordState extends State<NotifyRegKeyword> {
     }
   }
 
-  
-
   //키워드 삭제
   deleteKeyword(String id, String keyword) async {
     var headers = {
-      'Authorization': '${Get.find<TokenController>().token}',
+      'Authorization': '${TokenController.to.token}',
       'Content-Type': 'application/json'
     };
     var request = http.Request(
