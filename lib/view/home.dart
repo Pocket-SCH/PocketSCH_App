@@ -24,7 +24,7 @@ class Home extends StatelessWidget {
               width: width / 2,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.toNamed('notify');
+                  Get.toNamed('notify/regKeyword');
                 },
                 child: Padding(
                     padding: EdgeInsets.fromLTRB(20, 5, 30, 5),

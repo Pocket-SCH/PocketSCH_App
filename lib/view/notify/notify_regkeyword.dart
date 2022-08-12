@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pocket_sch/controller/reg_keyword_controller.dart';
 import 'package:pocket_sch/controller/token_controller.dart';
 import 'package:pocket_sch/custom_color.dart';
 import 'package:http/http.dart' as http;
-import 'package:pocket_sch/model/reg_keyword.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
 class NotifyRegKeyword extends StatefulWidget {
   const NotifyRegKeyword({Key? key}) : super(key: key);
 
@@ -15,14 +15,8 @@ class NotifyRegKeyword extends StatefulWidget {
 }
 
 class _NotifyRegKeywordState extends State<NotifyRegKeyword> {
+  var _keyList = RegKeywordController.to.keyList;
   final _addKeywordController = TextEditingController();
-  List<RegKeyword> keyList = [];
-
-  @override
-  void initState() {
-    loadKeyword();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,9 +111,12 @@ class _NotifyRegKeywordState extends State<NotifyRegKeyword> {
                                                 Size(width / 15, width / 15),
                                             shape: CircleBorder()),
                                         onPressed: () {
-                                          regKeyword(
-                                              _addKeywordController.text);
-                                          _addKeywordController.clear();
+                                          if(_addKeywordController.text.length >= 2)
+                                            {regKeyword(
+                                                _addKeywordController.text);
+                                            _addKeywordController.clear();}
+                                          else
+                                            Fluttertoast.showToast(msg: '최소 2글자 이상 입력해주세요');
                                         },
                                         child: Icon(Icons.add))
                                   ],
@@ -136,22 +133,26 @@ class _NotifyRegKeywordState extends State<NotifyRegKeyword> {
                                 thickness: 1,
                                 color: Color(0xff707070),
                               ),
-                              ListView.builder(
+                              Obx(()=>ListView.builder(
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
-                                itemCount: keyList.length,
+                                itemCount: _keyList.length,
                                 itemBuilder: (BuildContext context, index) {
                                 return Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(keyList[index].keyword),
-                                    IconButton(onPressed: (){
-                                      deleteKeyword(keyList[index].id.toString(), keyList[index].keyword);
-                                    }, icon: Image.asset('assets/btn_delete.png'))
+                                    Text(_keyList[index].keyword, style: TextStyle(fontSize: 15)),
+                                    Transform.scale(
+                                      scale: 0.7,
+                                      child: IconButton(
+                                        onPressed: (){
+                                        deleteKeyword(_keyList[index].id.toString(), _keyList[index].keyword);
+                                      }, icon: Image.asset('assets/btn_delete.png')),
+                                    )
 
                                   ],
                                 );
-                              })
+                              }))
                             ])),
                   ),
                 ),
@@ -176,30 +177,15 @@ class _NotifyRegKeywordState extends State<NotifyRegKeyword> {
 
     http.StreamedResponse response = await request.send();
 
-    if (response.statusCode == 200) {
-      print(await response.stream.bytesToString());
-      print('Success');
+    if (response.statusCode == 201) {
+      RegKeywordController.to.loadKeyword();
+      Fluttertoast.showToast(msg: '키워드가 성공적으로 추가되었습니다');
     } else {
       print(await response.stream.bytesToString());
     }
   }
 
-  //키워드 불러오기
-  loadKeyword() async {
-    var headers = {'Authorization': '${Get.find<TokenController>().token}'};
-    var request = http.Request('GET',
-        Uri.parse('http://13.209.200.114:8080/pocket-sch/v1/info/keywords'));
-
-    request.headers.addAll(headers);
-
-    http.StreamedResponse response = await request.send();
-
-    if (response.statusCode == 200) {
-      print(await response.stream.bytesToString());
-    } else {
-      print(response.reasonPhrase);
-    }
-  }
+  
 
   //키워드 삭제
   deleteKeyword(String id, String keyword) async {
@@ -217,7 +203,8 @@ class _NotifyRegKeywordState extends State<NotifyRegKeyword> {
     http.StreamedResponse response = await request.send();
 
     if (response.statusCode == 200) {
-      print(await response.stream.bytesToString());
+      Fluttertoast.showToast(msg: '키워드가 성공적으로 삭제되었습니다');
+      RegKeywordController.to.loadKeyword();
     } else {
       print(response.reasonPhrase);
     }

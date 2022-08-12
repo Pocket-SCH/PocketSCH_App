@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pocket_sch/controller/bus_timeTable_controller.dart';
+import 'package:pocket_sch/controller/reg_keyword_controller.dart';
 import 'package:pocket_sch/controller/token_controller.dart';
 import 'package:pocket_sch/model/bus_timeTable.dart';
 import 'package:pocket_sch/splash.dart';
@@ -48,7 +49,9 @@ class MyApp extends StatelessWidget {
         getPages: [
           //다른 페이지로 파라미터를 간단하게 넘길 때 사용
           //이름 뒤에 /:사용할 파라미터명 적으면 됨
-          GetPage(name: '/notify', page: () => NotifyRegKeyword()),
+          GetPage(name: '/notify/regKeyword', page: () => NotifyRegKeyword(),binding: BindingsBuilder(() {
+            Get.lazyPut<RegKeywordController>(() => RegKeywordController());
+          },)),
           GetPage(name: '/bus', page: () => BusHome()),
           GetPage(name: '/eat', page: () => EatHome()),
           GetPage(
