@@ -49,9 +49,7 @@ class _SolidButtonBuilderState extends State<SolidButtonBuilder> {
       double? shadowheight,
       double? width,
       TextStyle? textstyle,
-      double? position) {
-    _text = text;
-  }
+      double? position) {}
 
   @override
   Widget build(BuildContext context) {
