@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:get/get.dart';
 import 'package:pocket_sch/controller/bus_timeTable_controller.dart';
 import 'package:pocket_sch/controller/reg_keyword_controller.dart';
@@ -20,6 +21,7 @@ import 'controller/alarm_controller.dart';
 import 'firebase_options.dart';
 import 'package:http/http.dart' as http;
 import 'package:is_first_run/is_first_run.dart';
+import 'controller/notify_home_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +35,8 @@ void main() async {
   var fcmToken = await Get.find<TokenController>().getToken();
   bool firstRun = await IsFirstRun.isFirstRun();
   if (firstRun) regTokenPost(fcmToken!);
+  // Get.put(notifyController());
+  notifyController().callApi(0);
   runApp(const MyApp());
   runAlarm();
 }
@@ -49,9 +53,23 @@ class MyApp extends StatelessWidget {
         getPages: [
           //다른 페이지로 파라미터를 간단하게 넘길 때 사용
           //이름 뒤에 /:사용할 파라미터명 적으면 됨
-          GetPage(name: '/notify/regKeyword', page: () => NotifyRegKeyword(),binding: BindingsBuilder(() {
-            Get.lazyPut<RegKeywordController>(() => RegKeywordController());
-          },)),
+          GetPage(
+              name: '/notify/regKeyword',
+              page: () => NotifyRegKeyword(),
+              binding: BindingsBuilder(
+                () {
+                  Get.lazyPut<RegKeywordController>(
+                      () => RegKeywordController());
+                },
+              )),
+          GetPage(
+              name: '/notify',
+              page: () => NotifyHome(),
+              binding: BindingsBuilder(
+                () {
+                  Get.lazyPut<notifyController>(() => notifyController());
+                },
+              )),
           GetPage(name: '/bus', page: () => BusHome()),
           GetPage(name: '/eat', page: () => EatHome()),
           GetPage(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pocket_sch/custom_color.dart';
+import '../controller/notify_home_controller.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -9,6 +10,8 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
 
+    //공지사항 업데이트를 위한 클래스 참조
+    final usedNotifyController = Get.put(notifyController());
     return Scaffold(
       body: Center(
         child: Column(
@@ -24,7 +27,9 @@ class Home extends StatelessWidget {
               width: width / 2,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.toNamed('notify/regKeyword');
+                  //공지사항 업데이트를 위해 함수 실행
+
+                  Get.toNamed('notify');
                 },
                 child: Padding(
                     padding: EdgeInsets.fromLTRB(20, 5, 30, 5),
