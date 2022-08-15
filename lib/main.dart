@@ -12,6 +12,7 @@ import 'package:pocket_sch/view/bus/schoolbus_choice.dart';
 import 'package:pocket_sch/view/bus/bus_home.dart';
 import 'package:pocket_sch/view/bus/stationbus_choice.dart';
 import 'package:pocket_sch/view/eat_home.dart';
+import 'package:pocket_sch/view/food/food_slot.dart';
 import 'package:pocket_sch/view/notify/notify_home.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -49,11 +50,17 @@ class MyApp extends StatelessWidget {
         getPages: [
           //다른 페이지로 파라미터를 간단하게 넘길 때 사용
           //이름 뒤에 /:사용할 파라미터명 적으면 됨
-          GetPage(name: '/notify/regKeyword', page: () => NotifyRegKeyword(),binding: BindingsBuilder(() {
-            Get.lazyPut<RegKeywordController>(() => RegKeywordController());
-          },)),
+          GetPage(
+              name: '/notify/regKeyword',
+              page: () => NotifyRegKeyword(),
+              binding: BindingsBuilder(
+                () {
+                  Get.lazyPut<RegKeywordController>(
+                      () => RegKeywordController());
+                },
+              )),
           GetPage(name: '/bus', page: () => BusHome()),
-          GetPage(name: '/eat', page: () => EatHome()),
+          GetPage(name: '/food/slot', page: () => FoodSlot()),
           GetPage(
               name: '/alarm',
               page: () => AlarmPage(),
