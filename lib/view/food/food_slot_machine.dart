@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:pocket_sch/view/food/food_slot_controller.dart';
 
 class FoodSlotMachine extends StatefulWidget {
-  late final FoodSlotController? controller;
-  FoodSlotMachine({Key? key, this.controller}) : super(key: key);
+  //FixedExtentScrollController를 커스텀한 FoodSlotController 생성
+  late final FoodSlotController controller;
+  FoodSlotMachine({Key? key, required this.controller}) : super(key: key);
 
   @override
   State<FoodSlotMachine> createState() => _FoodSlotMachineState();
@@ -12,6 +13,7 @@ class FoodSlotMachine extends StatefulWidget {
 class _FoodSlotMachineState extends State<FoodSlotMachine> {
   int counter = 0;
 
+  // 여기서 글자가 쓰여진 카드를 만든다
   List<Widget> _getSlots() {
     List<Widget> result = [];
     for (int i = 0; i <= 1; i++) {
@@ -35,25 +37,40 @@ class _FoodSlotMachineState extends State<FoodSlotMachine> {
 
   @override
   void dispose() {
-    widget.controller?.dispose();
+    widget.controller.dispose();
     super.dispose();
+  }
+
+  //데이터를 받아오는 곧
+  List<Widget> getData() {
+    List<Widget> tmp = [];
+
+    for (int i = 0; i < 10; i++) {
+      tmp.add(Container(
+          child: Center(
+              child: Text(
+        i.toString(),
+        style: TextStyle(fontSize: 20),
+      ))));
+    }
+    return tmp;
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color.fromARGB(255, 240, 212, 103),
+      color: Colors.white,
       child: ListWheelScrollView.useDelegate(
-        controller: widget.controller?.getController(),
+        controller: widget.controller.getController(),
         physics: const FixedExtentScrollPhysics(),
-        itemExtent: 250,
-        childDelegate: ListWheelChildLoopingListDelegate(children: _getSlots()),
-        squeeze: 1.2,
+        itemExtent: 80,
+        childDelegate: ListWheelChildLoopingListDelegate(
+            children: widget.controller.getData()),
+        squeeze: 1.3,
+        //useMagnifier: true,
+        //magnification: 1.5,
         onSelectedItemChanged: (value) {
-          counter++;
-          if (counter == 10) {
-            widget.controller?.start();
-          }
+          print(value);
         },
       ),
     );

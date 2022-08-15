@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pocket_sch/controller/solid_button_builder.dart';
 import 'package:pocket_sch/view/food/food_slot_controller.dart';
 import 'package:pocket_sch/view/food/food_slot_machine.dart';
 import '../../custom_color.dart';
@@ -91,10 +92,32 @@ class _FoodSlotState extends State<FoodSlot> {
                                             Flexible(
                                                 flex: 250,
                                                 //여기에 룰렛 삽입
-                                                child: Container(
-                                                  child: FoodSlotMachine(
-                                                      controller:
-                                                          foodSlotController),
+                                                child: Stack(
+                                                  children: [
+                                                    Container(
+                                                      child: FoodSlotMachine(
+                                                          controller:
+                                                              foodSlotController),
+                                                    ),
+                                                    Center(
+                                                      child: Container(
+                                                        width: double.infinity,
+                                                        height: 50,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(
+                                                            width: 3,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    253,
+                                                                    242,
+                                                                    145),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 )),
                                             Flexible(
                                               flex: 100,
@@ -114,13 +137,7 @@ class _FoodSlotState extends State<FoodSlot> {
                       Flexible(
                           flex: 1,
                           child: Center(
-                            child: Container(
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      //테스트용
-                                      foodSlotController.start();
-                                    },
-                                    child: Text('test'))),
+                            child: Container(child: SolidButtonBuilder()),
                           ))
                     ]),
                   ),
