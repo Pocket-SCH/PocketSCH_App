@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -32,14 +33,25 @@ class _BusHomeState extends State<BusHome> {
   File? _image;
 
   var _text;
+
   List<Data> _datas = [];
 
   void initState() {
     super.initState();
-    ImageGetRequest();
+    print(_datas);
+
+    // _datas.addAll([
+    //   {"id": 0, "type": 0, "busTime": "0000", "busWeekDay": 1}
+    // ]);
+    //   int id;
+    // int type;
+    // String busTime;"
+    // int busWeekDay;
     String changed_day = changeDay();
 
     SchoolBusGetRequest(changed_day);
+
+    ImageGetRequest();
   }
 
   String getCurrentDay() {
@@ -47,6 +59,59 @@ class _BusHomeState extends State<BusHome> {
     initializeDateFormatting('ko_KR');
     final _currentDay = DateFormat.E('ko_KR').format(now).toString();
     return _currentDay;
+  }
+
+//학내순환 버스 Timer (몇분 남았는지 확인하기위해) - 리스트 보여주는 부분에도 쓰일 함수
+  String ChangeTime() {
+    // String time =
+    //     this._datas[0].busTime; //첫 번쨰 버스 시간을 가져온거임 -> 가까운 시간을 가져올 수 있도록 하기
+
+    var time_list = [];
+    int min;
+    var initM;
+
+    for (int i = 0; i < this._datas.length; i++) {
+      String time = this._datas[i].busTime;
+
+      // String time_list=this._datas[0]
+      final splitted = time.split('T');
+      print(splitted[1]);
+      DateTime formattedTime2 = DateFormat("hh:mm").parse(splitted[1]);
+
+      DateTime now = DateTime.now();
+      String formattedTime = DateFormat('kk:mm').format(now);
+      DateTime formattedTime1 = DateFormat("hh:mm").parse(formattedTime);
+      print("formateedTime: " + formattedTime);
+
+      Duration duration = formattedTime1.difference(formattedTime2);
+      print(duration.inSeconds); //계싼해서 나온 초
+
+      time_list.add(duration.inSeconds);
+    }
+    print(time_list);
+    min = time_list[0];
+    for (int j = 1; j < time_list.length; j++) {
+      if (time_list[j] < min && time_list[j] > 0) {
+        min = time_list[j];
+      }
+    }
+    print(min);
+
+    initM = min;
+    // var initM = 78;
+
+    double h, m;
+    int h1, m1;
+    double tmp;
+    h = initM / 3600;
+    h1 = h.toInt();
+    m = (initM % 3600) / 60;
+    m1 = m.toInt();
+
+    String result = "$h1:$m1"; //남은 시간
+
+    print(result);
+    return result;
   }
 
   String changeDay() {
@@ -68,8 +133,8 @@ class _BusHomeState extends State<BusHome> {
   }
 
 //학내 순환 버스 시간 가져오기 GET
-  void SchoolBusGetRequest(String day) async {
-    String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/2/$day";
+  Future SchoolBusGetRequest(String day) async {
+    String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/0/$day";
     final Uri url = Uri.parse(api);
 
     final response = await http.get(url);
@@ -83,19 +148,6 @@ class _BusHomeState extends State<BusHome> {
       _datas.addAll(parsedResponse);
     });
     print(parsedResponse);
-
-    // var request = http.MultipartRequest('GET',
-    //     Uri.parse('http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/2/1'));
-    // request.headers.addAll(headers);
-
-    // http.StreamedResponse response = await request.send();
-
-    // if (response.statusCode == 200) {
-    //   print(await response.stream.bytesToString());
-    //   print(await response.stream.toBytes());
-    // } else {
-    //   print(response.reasonPhrase);
-    // }
   }
 
   @override
@@ -306,7 +358,38 @@ class _BusHomeState extends State<BusHome> {
                         bottomRight: Radius.circular(5),
                         topRight: Radius.circular(5))),
                 child: Column(
-                  children: [Text("후문정류장에서"), Text(this._datas[0].busTime)],
+                  children: [
+                    Text("후문정류장에서"),
+                    FutureBuilder(
+                        future: _fetch(),
+                        builder:
+                            (BuildContext content, AsyncSnapshot snapshot) {
+                          //해당 부분은 data를 아직 받아오지 못했을 떄 실행
+                          if (snapshot.hasData == false) {
+                            return Text("데이터를 받아오는 중...");
+                            // CircularProgressIndicator();
+                          }
+                          //error가 발생하게 될 경우 반환하게 되는 부분
+                          else if (snapshot.hasError) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Error: ${snapshot.error}',
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            );
+                          }
+                          //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
+                          else {
+                            // ChangeTime(); //몇 분 남았는지 가져오게 하는 함수
+
+                            return Text(
+                                ChangeTime()); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
+
+                          }
+                        })
+                    // Text(this._datas[0].busTime) //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
+                  ],
                 ),
               ),
             )
@@ -437,51 +520,7 @@ class Data {
   }
 }
 
-void check_time(BuildContext context) {
-  //context는 Snackbar용, 다른 방식으로 출력할거면 필요없음.
-  var now = new DateTime.now(); //반드시 다른 함수에서 해야함, Mypage같은 클래스에서는 사용 불가능
-  String formatDate = DateFormat('yy/MM/dd - HH:mm:ss').format(now); //format변경
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    //출력용 snackbar
-    content: Text('$formatDate'),
-    duration: Duration(seconds: 20),
-  ));
+Future<String> _fetch() async {
+  await Future.delayed(Duration(seconds: 1));
+  return 'Call Data';
 }
-
-
-// class DATAS {
-//   int id;
-//   int type;
-//   String busTime;
-//   int busWeekDay;
-
-//   DATAS(
-//       {required this.id,
-//       required this.type,
-//       required this.busTime,
-//       required this.busWeekDay});
-
-//   factory DATAS.fromJson(Map<String, dynamic> parsedJson) {
-//     return new DATAS(
-//         id: parsedJson['id'],
-//         type: parsedJson['type'],
-//         busTime: parsedJson['busTime'],
-//         busWeekDay: parsedJson['busWeekDay']);
-//   }
-// }
-
-// class DATA {
-//   int statusCode;
-//   String resMessage;
-//   List<DATAS> data;
-
-//   DATA(
-//       {required this.statusCode, required this.resMessage, required this.data});
-//   factory DATA.fromJson(Map<String, dynamic> parsedJson) {
-//     var list = parsedJson['data'][''] as List;
-//     return new DATA(
-//         statusCode: parsedJson['statusCode'],
-//         resMessage: parsedJson['resMessage'],
-//         data: list.map((i) => DATAS.fromJson(i)).toList());
-//   }
-// }
