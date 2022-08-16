@@ -144,6 +144,9 @@ class _FoodSlotState extends State<FoodSlot> {
                               text: 'START',
                               shadowcolor: Color.fromARGB(255, 114, 14, 47),
                               color: Colors.pink,
+                              onPressed: () {
+                                print('test2');
+                              },
                             )),
                           ))
                     ]),

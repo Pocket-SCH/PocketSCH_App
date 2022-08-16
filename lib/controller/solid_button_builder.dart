@@ -1,20 +1,5 @@
 import 'package:flutter/material.dart';
 
-abstract class test {
-  double _initPosition = 4;
-  double _position = 4;
-  String _text = '';
-  Color _color = Colors.blue;
-  Color _shadowColor = Colors.black;
-  double _height = 64;
-  double _shadowHeight = 4;
-  double _width = 200;
-  TextStyle _textStyle = TextStyle(
-    color: Colors.white,
-    fontSize: 22,
-  );
-}
-
 class SolidButtonBuilder extends StatefulWidget {
   final String text;
   final Color color;
@@ -24,6 +9,7 @@ class SolidButtonBuilder extends StatefulWidget {
   final double width;
   final TextStyle? textstyle;
   final double position;
+  final VoidCallback onPressed;
 
   SolidButtonBuilder(
       {Key? key,
@@ -34,12 +20,21 @@ class SolidButtonBuilder extends StatefulWidget {
       this.shadowheight = 4,
       this.width = 200,
       this.textstyle,
-      this.position = 4})
+      this.position = 4,
+      required this.onPressed})
       : super(key: key);
 
   @override
-  State<SolidButtonBuilder> createState() => _SolidButtonBuilderState(text,
-      color, shadowcolor, hegiht, shadowheight, width, textstyle, position);
+  State<SolidButtonBuilder> createState() => _SolidButtonBuilderState(
+      text,
+      color,
+      shadowcolor,
+      hegiht,
+      shadowheight,
+      width,
+      textstyle,
+      position,
+      onPressed);
 }
 
 class _SolidButtonBuilderState extends State<SolidButtonBuilder> {
@@ -52,17 +47,18 @@ class _SolidButtonBuilderState extends State<SolidButtonBuilder> {
   late final double _shadowHeight;
   late final double _width;
   late final TextStyle _textStyle;
+  late final VoidCallback _onPressed;
 
   _SolidButtonBuilderState(
-    String text,
-    Color color,
-    Color shadowcolor,
-    double height,
-    double shadowheight,
-    double width,
-    TextStyle? textstyle,
-    double position,
-  ) {
+      String text,
+      Color color,
+      Color shadowcolor,
+      double height,
+      double shadowheight,
+      double width,
+      TextStyle? textstyle,
+      double position,
+      VoidCallback onPressed) {
     this._text = text;
     this._color = color;
     this._shadowColor = shadowcolor;
@@ -75,6 +71,8 @@ class _SolidButtonBuilderState extends State<SolidButtonBuilder> {
           fontSize: 22,
         );
     this._position = position;
+    this._initPosition = position;
+    this._onPressed = onPressed;
   }
 
   @override
@@ -90,12 +88,14 @@ class _SolidButtonBuilderState extends State<SolidButtonBuilder> {
         setState(() {
           _initPosition = 0;
         });
+        _onPressed.call();
       },
       onTapCancel: () {
         setState(() {
           _initPosition = _position;
         });
       },
+      // 버튼 아래 그림자 부분
       child: Container(
         height: _height + _shadowHeight,
         width: _width,
@@ -114,6 +114,7 @@ class _SolidButtonBuilderState extends State<SolidButtonBuilder> {
                 ),
               ),
             ),
+            // 실제 버튼 부분
             AnimatedPositioned(
               curve: Curves.easeIn,
               bottom: _initPosition,
