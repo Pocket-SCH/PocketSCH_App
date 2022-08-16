@@ -45,6 +45,7 @@ class _BusHomeState extends State<BusHome> {
     SchoolBusGetRequest(changed_day);
 
     ImageGetRequest();
+    // RefreshTime();
   }
 
   String getCurrentDay() {
@@ -52,6 +53,55 @@ class _BusHomeState extends State<BusHome> {
     initializeDateFormatting('ko_KR');
     final _currentDay = DateFormat.E('ko_KR').format(now).toString();
     return _currentDay;
+  }
+
+  String RefreshTime() {
+    var time_list = [];
+    int min;
+    var initM;
+
+    double h, m;
+    int h1, m1;
+    double tmp;
+    // Timer _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    setState(() {
+      for (int i = 0; i < this._datas.length; i++) {
+        String time = this._datas[i].busTime;
+
+        // String time_list=this._datas[0]
+        final splitted = time.split('T');
+        print("학내순환 시간 : " + splitted[1]); //학내순환이니까 10분 간격으로 나옴
+        DateTime formattedTime2 = DateFormat("hh:mm").parse(splitted[1]);
+
+        DateTime now = DateTime.now();
+        String formattedTime = DateFormat('kk:mm').format(now);
+        print("현재시간 : " + formattedTime);
+        DateTime formattedTime1 = DateFormat("hh:mm").parse(formattedTime);
+        print("formateedTime: " + formattedTime);
+
+        Duration duration = formattedTime2.difference(formattedTime1);
+        // print(duration.inSeconds); //계산해서 나온 초
+
+        if (duration.inSeconds >= 0) {
+          time_list.add(duration.inSeconds);
+        }
+      }
+      // print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
+    });
+    // });
+
+    min = time_list[0];
+    print(min); //가장 얼마 안남은 시간
+
+    initM = min;
+
+    // h = initM / 3600;
+    // h1 = h.toInt();
+    m = (initM % 3600) / 60;
+    m1 = m.toInt();
+
+    String result = "$m1분 뒤 출발"; //남은 시간
+    return result;
   }
 
 //학내순환 버스 Timer (몇분 남았는지 확인하기위해) - 리스트 보여주는 부분에도 쓰일 함수
@@ -62,12 +112,13 @@ class _BusHomeState extends State<BusHome> {
     var time_list = [];
     int min;
     var initM;
-    // Timer
-    // _timer=Timer.periodic(Duration(seconds:1),(timer) {
-    //   setState(() {
 
-    //   });
-    // })
+    double h, m;
+    int h1, m1;
+    double tmp;
+    // Timer _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    //   setState(() {});
+    // });
 
     for (int i = 0; i < this._datas.length; i++) {
       String time = this._datas[i].busTime;
@@ -97,23 +148,13 @@ class _BusHomeState extends State<BusHome> {
 
     initM = min;
 
-    double h, m;
-    int h1, m1;
-    double tmp;
     // h = initM / 3600;
     // h1 = h.toInt();
     m = (initM % 3600) / 60;
     m1 = m.toInt();
 
     String result = "$m1분 뒤 출발"; //남은 시간
-
-    // print(result);
-    // return result;
-    // return Timer.periodic(const Duration(minutes: 1), (timer) async {
-    //   result;
-    // });
     return result;
-    // return "test";
   }
 
   String changeDay() {
@@ -269,10 +310,23 @@ class _BusHomeState extends State<BusHome> {
                                 )
                               : Image.file(File(_image!.path)),
                         ),
-                        IconButton(
-                          onPressed: selectFromGallery,
-                          icon: Icon(Icons.image_outlined),
-                          iconSize: 20,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              onPressed: selectFromGallery,
+                              icon: Icon(Icons.image_outlined),
+                              iconSize: 30,
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            IconButton(
+                              onPressed: RefreshTime,
+                              icon: Icon(Icons.refresh_outlined),
+                              iconSize: 30,
+                            ),
+                          ],
                         ),
                         SizedBox(
                           height: 15,
