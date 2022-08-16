@@ -137,7 +137,14 @@ class _FoodSlotState extends State<FoodSlot> {
                       Flexible(
                           flex: 1,
                           child: Center(
-                            child: Container(child: SolidButtonBuilder()),
+                            child: Container(
+                                child: SolidButtonBuilder(
+                              hegiht: 80,
+                              width: 100,
+                              text: 'START',
+                              shadowcolor: Color.fromARGB(255, 114, 14, 47),
+                              color: Colors.pink,
+                            )),
                           ))
                     ]),
                   ),

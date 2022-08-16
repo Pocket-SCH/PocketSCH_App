@@ -1,33 +1,6 @@
 import 'package:flutter/material.dart';
 
-class SolidButtonBuilder extends StatefulWidget {
-  final String? text;
-  final Color? color;
-  final Color? shadowcolor;
-  final double? hegiht;
-  final double? shadowheight;
-  final double? width;
-  final TextStyle? textstyle;
-  final double? position;
-
-  SolidButtonBuilder(
-      {Key? key,
-      this.text,
-      this.color,
-      this.shadowcolor,
-      this.hegiht,
-      this.shadowheight,
-      this.width,
-      this.textstyle,
-      this.position})
-      : super(key: key);
-
-  @override
-  State<SolidButtonBuilder> createState() => _SolidButtonBuilderState(text,
-      color, shadowcolor, hegiht, shadowheight, width, textstyle, position);
-}
-
-class _SolidButtonBuilderState extends State<SolidButtonBuilder> {
+abstract class test {
   double _initPosition = 4;
   double _position = 4;
   String _text = '';
@@ -40,16 +13,69 @@ class _SolidButtonBuilderState extends State<SolidButtonBuilder> {
     color: Colors.white,
     fontSize: 22,
   );
+}
+
+class SolidButtonBuilder extends StatefulWidget {
+  final String text;
+  final Color color;
+  final Color shadowcolor;
+  final double hegiht;
+  final double shadowheight;
+  final double width;
+  final TextStyle? textstyle;
+  final double position;
+
+  SolidButtonBuilder(
+      {Key? key,
+      this.text = '',
+      this.color = Colors.blue,
+      this.shadowcolor = Colors.black,
+      this.hegiht = 64,
+      this.shadowheight = 4,
+      this.width = 200,
+      this.textstyle,
+      this.position = 4})
+      : super(key: key);
+
+  @override
+  State<SolidButtonBuilder> createState() => _SolidButtonBuilderState(text,
+      color, shadowcolor, hegiht, shadowheight, width, textstyle, position);
+}
+
+class _SolidButtonBuilderState extends State<SolidButtonBuilder> {
+  double _initPosition = 4;
+  late final double _position;
+  late final String _text;
+  late final Color _color;
+  late final Color _shadowColor;
+  late final double _height;
+  late final double _shadowHeight;
+  late final double _width;
+  late final TextStyle _textStyle;
 
   _SolidButtonBuilderState(
-      String? text,
-      Color? color,
-      Color? shadowcolor,
-      double? height,
-      double? shadowheight,
-      double? width,
-      TextStyle? textstyle,
-      double? position) {}
+    String text,
+    Color color,
+    Color shadowcolor,
+    double height,
+    double shadowheight,
+    double width,
+    TextStyle? textstyle,
+    double position,
+  ) {
+    this._text = text;
+    this._color = color;
+    this._shadowColor = shadowcolor;
+    this._height = height;
+    this._shadowHeight = shadowheight;
+    this._width = width;
+    this._textStyle = textstyle ??
+        TextStyle(
+          color: Colors.white,
+          fontSize: 22,
+        );
+    this._position = position;
+  }
 
   @override
   Widget build(BuildContext context) {
