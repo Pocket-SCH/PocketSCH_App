@@ -77,47 +77,61 @@ class _FoodSlotState extends State<FoodSlot> {
                                   height: double.infinity,
                                   color: Colors.white,
                                   child: Image(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage('assets/img_slot.png')),
+                                      fit: BoxFit.fill,
+                                      image: AssetImage(
+                                          'assets/img_slot_modified.png')),
                                 ),
                                 Column(
                                   children: [
                                     Flexible(flex: 150, child: Container()),
                                     Flexible(
-                                        flex: 110,
+                                        flex: 130,
                                         child: Row(
                                           children: [
                                             Flexible(
-                                                flex: 95, child: Container()),
+                                                flex: 110, child: Container()),
                                             Flexible(
-                                                flex: 250,
+                                                flex: 300,
                                                 //여기에 룰렛 삽입
-                                                child: Stack(
-                                                  children: [
-                                                    Container(
-                                                      child: FoodSlotMachine(
-                                                          controller:
-                                                              foodSlotController),
-                                                    ),
-                                                    Center(
-                                                      child: Container(
-                                                        width: double.infinity,
-                                                        height: 50,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          border: Border.all(
-                                                            width: 3,
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    253,
-                                                                    242,
-                                                                    145),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          width: 8,
+                                                          color: Colors.black
+                                                              .withOpacity(
+                                                                  0.4)),
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  10))),
+                                                  child: Stack(
+                                                    children: [
+                                                      Container(
+                                                        child: FoodSlotMachine(
+                                                            controller:
+                                                                foodSlotController),
+                                                      ),
+                                                      Center(
+                                                        child: Container(
+                                                          width:
+                                                              double.infinity,
+                                                          height: 50,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            border: Border.all(
+                                                              width: 3,
+                                                              color: Color
+                                                                  .fromARGB(
+                                                                      255,
+                                                                      253,
+                                                                      242,
+                                                                      145),
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                    ],
+                                                  ),
                                                 )),
                                             Flexible(
                                               flex: 100,
@@ -125,7 +139,7 @@ class _FoodSlotState extends State<FoodSlot> {
                                             )
                                           ],
                                         )),
-                                    Flexible(flex: 110, child: Container())
+                                    Flexible(flex: 130, child: Container())
                                   ],
                                 )
                               ],
@@ -145,7 +159,7 @@ class _FoodSlotState extends State<FoodSlot> {
                               shadowcolor: Color.fromARGB(255, 114, 14, 47),
                               color: Colors.pink,
                               onPressed: () {
-                                print('test2');
+                                foodSlotController.start();
                               },
                             )),
                           ))
