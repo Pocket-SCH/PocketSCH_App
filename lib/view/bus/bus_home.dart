@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
@@ -39,14 +40,6 @@ class _BusHomeState extends State<BusHome> {
   void initState() {
     super.initState();
     print(_datas);
-
-    // _datas.addAll([
-    //   {"id": 0, "type": 0, "busTime": "0000", "busWeekDay": 1}
-    // ]);
-    //   int id;
-    // int type;
-    // String busTime;"
-    // int busWeekDay;
     String changed_day = changeDay();
 
     SchoolBusGetRequest(changed_day);
@@ -69,49 +62,58 @@ class _BusHomeState extends State<BusHome> {
     var time_list = [];
     int min;
     var initM;
+    // Timer
+    // _timer=Timer.periodic(Duration(seconds:1),(timer) {
+    //   setState(() {
+
+    //   });
+    // })
 
     for (int i = 0; i < this._datas.length; i++) {
       String time = this._datas[i].busTime;
 
       // String time_list=this._datas[0]
       final splitted = time.split('T');
-      print(splitted[1]);
+      print("학내순환 시간 : " + splitted[1]); //학내순환이니까 10분 간격으로 나옴
       DateTime formattedTime2 = DateFormat("hh:mm").parse(splitted[1]);
 
       DateTime now = DateTime.now();
       String formattedTime = DateFormat('kk:mm').format(now);
+      print("현재시간 : " + formattedTime);
       DateTime formattedTime1 = DateFormat("hh:mm").parse(formattedTime);
       print("formateedTime: " + formattedTime);
 
-      Duration duration = formattedTime1.difference(formattedTime2);
-      print(duration.inSeconds); //계싼해서 나온 초
+      Duration duration = formattedTime2.difference(formattedTime1);
+      // print(duration.inSeconds); //계산해서 나온 초
 
-      time_list.add(duration.inSeconds);
-    }
-    print(time_list);
-    min = time_list[0];
-    for (int j = 1; j < time_list.length; j++) {
-      if (time_list[j] < min && time_list[j] > 0) {
-        min = time_list[j];
+      if (duration.inSeconds >= 0) {
+        time_list.add(duration.inSeconds);
       }
     }
-    print(min);
+    // print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
+
+    min = time_list[0];
+    print(min); //가장 얼마 안남은 시간
 
     initM = min;
-    // var initM = 78;
 
     double h, m;
     int h1, m1;
     double tmp;
-    h = initM / 3600;
-    h1 = h.toInt();
+    // h = initM / 3600;
+    // h1 = h.toInt();
     m = (initM % 3600) / 60;
     m1 = m.toInt();
 
-    String result = "$h1:$m1"; //남은 시간
+    String result = "$m1분 뒤 출발"; //남은 시간
 
-    print(result);
+    // print(result);
+    // return result;
+    // return Timer.periodic(const Duration(minutes: 1), (timer) async {
+    //   result;
+    // });
     return result;
+    // return "test";
   }
 
   String changeDay() {
