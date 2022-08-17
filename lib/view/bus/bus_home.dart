@@ -33,23 +33,24 @@ class BusHome extends StatefulWidget {
 class _BusHomeState extends State<BusHome> {
   File? _image;
 
+//학내 순환
   var _text;
-
   List<Data> _datas = [];
+
+//신창역 셔틀
+  var _text2;
+  List<Data> _datas2 = [];
 
   void initState() {
     super.initState();
     print(_datas);
+    print(_datas2);
     String changed_day = changeDay();
 
     SchoolBusGetRequest(changed_day);
+    StationBusGetRequest(changed_day);
 
     ImageGetRequest();
-  }
-
-  void dispose() {
-    super.dispose();
-    // RefreshTime();
   }
 
   String getCurrentDay() {
@@ -59,68 +60,63 @@ class _BusHomeState extends State<BusHome> {
     return _currentDay;
   }
 
-  // String RefreshTime() {
-  //   var time_list = [];
-  //   time_list.add(0);
-  //   int min;
-  //   var initM;
-
-  //   double h, m;
-  //   int h1, m1;
-  //   double tmp;
-  //   Timer _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-  //     setState(() {
-  //       for (int i = 0; i < this._datas.length; i++) {
-  //         String time = this._datas[i].busTime;
-
-  //         // String time_list=this._datas[0]
-  //         final splitted = time.split('T');
-  //         // print("학내순환 시간 : " + splitted[1]); //학내순환이니까 10분 간격으로 나옴
-  //         DateTime formattedTime2 = DateFormat("hh:mm").parse(splitted[1]);
-
-  //         DateTime now = DateTime.now();
-  //         String formattedTime = DateFormat('kk:mm').format(now);
-  //         // print("현재시간 : " + formattedTime);
-  //         DateTime formattedTime1 = DateFormat("hh:mm").parse(formattedTime);
-  //         // print("formateedTime: " + formattedTime);
-
-  //         Duration duration = formattedTime2.difference(formattedTime1);
-  //         // print(duration.inSeconds); //계산해서 나온 초
-
-  //         if (duration.inSeconds >= 0) {
-  //           time_list.add(duration.inSeconds);
-  //         }
-  //       }
-  //       // print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
-  //     });
-  //   });
-
-  //   min = time_list[0];
-  //   // print(min); //가장 얼마 안남은 시간
-
-  //   initM = min;
-
-  //   // h = initM / 3600;
-  //   // h1 = h.toInt();
-  //   m = (initM % 3600) / 60;
-  //   m1 = m.toInt();
-
-  //   String result = "$m1분 뒤 출발"; //남은 시간
-  //   return result;
-  // }
-
-//학내순환 버스 Timer (몇분 남았는지 확인하기위해) - 리스트 보여주는 부분에도 쓰일 함수
-  String ChangeTime() {
-    // String time =
-    //     this._datas[0].busTime; //첫 번쨰 버스 시간을 가져온거임 -> 가까운 시간을 가져올 수 있도록 하기
+//새로고침 버스 시간
+  String RefreshBusTime() {
     var time_list = [];
-    // time_list.add(1);
     int min;
     var initM;
 
     double h, m;
     int h1, m1;
     double tmp;
+    setState(() {
+      for (int i = 0; i < this._datas.length; i++) {
+        String time = this._datas[i].busTime;
+
+        // String time_list=this._datas[0]
+        final splitted = time.split('T');
+        // print("학내순환 시간 : " + splitted[1]); //학내순환이니까 10분 간격으로 나옴
+        DateTime formattedTime2 = DateFormat("hh:mm").parse(splitted[1]);
+
+        DateTime now = DateTime.now();
+        String formattedTime = DateFormat('kk:mm').format(now);
+        // print("현재시간 : " + formattedTime);
+        DateTime formattedTime1 = DateFormat("hh:mm").parse(formattedTime);
+        // print("formateedTime: " + formattedTime);
+
+        Duration duration = formattedTime2.difference(formattedTime1);
+        // print(duration.inSeconds); //계산해서 나온 초
+
+        if (duration.inSeconds >= 0) {
+          time_list.add(duration.inSeconds);
+        }
+      }
+      // print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
+    });
+    // });
+
+    min = time_list[0];
+    // print(min); //가장 얼마 안남은 시간
+
+    initM = min;
+
+    // h = initM / 3600;
+    // h1 = h.toInt();
+    m = (initM % 3600) / 60;
+    m1 = m.toInt();
+
+    String result = "$m1분 뒤 출발"; //남은 시간
+    return result;
+  }
+
+//학내순환 버스 Timer (몇분 남았는지 확인하기위해) - 리스트 보여주는 부분에도 쓰일 함수
+  String SchoolBusChangeTime() {
+    var time_list = [];
+    int min;
+    var initM;
+
+    double m;
+    int m1;
 
     for (int i = 0; i < this._datas.length; i++) {
       String time = this._datas[i].busTime;
@@ -155,14 +151,53 @@ class _BusHomeState extends State<BusHome> {
     m = (initM % 3600) / 60;
     m1 = m.toInt();
 
-    // if (time_list[0] == 1) {
-    //   return "버스가 없습니다.";
-    // } else {
-    //   String result = "$m1분 뒤 출발"; //남은 시간
-    //   return result;
-    // }
-
     String result = "$m1분 뒤 출발"; //남은 시간
+    return result;
+  }
+
+//신창역 셔틀 버스 Timer
+  String StationBusChangeTime() {
+    var time_list = [];
+    int min;
+    var initM;
+
+    double m, h;
+    int m1, h1;
+
+    for (int i = 0; i < this._datas2.length; i++) {
+      String time = this._datas2[i].busTime;
+
+      // String time_list=this._datas[0]
+      final splitted = time.split('T');
+      // print("학내순환 시간 : " + splitted[1]); //학내순환이니까 10분 간격으로 나옴
+      DateTime formattedTime2 = DateFormat("hh:mm").parse(splitted[1]);
+
+      DateTime now = DateTime.now();
+      String formattedTime = DateFormat('kk:mm').format(now);
+      // print("현재시간 : " + formattedTime);
+      DateTime formattedTime1 = DateFormat("hh:mm").parse(formattedTime);
+      // print("formateedTime: " + formattedTime);
+
+      Duration duration = formattedTime2.difference(formattedTime1);
+      // print(duration.inSeconds); //계산해서 나온 초
+
+      if (duration.inSeconds >= 0) {
+        time_list.add(duration.inSeconds);
+      }
+    }
+    // print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
+
+    min = time_list[0];
+    // print(min); //가장 얼마 안남은 시간
+
+    initM = min;
+
+    h = initM / 3600;
+    h1 = h.toInt();
+    m = (initM % 3600) / 60;
+    m1 = m.toInt();
+
+    String result = "$h1시간 $m1분 뒤 출발"; //남은 시간
     return result;
   }
 
@@ -198,6 +233,24 @@ class _BusHomeState extends State<BusHome> {
     setState(() {
       _datas.clear();
       _datas.addAll(parsedResponse);
+    });
+    print(parsedResponse);
+  }
+
+  //신창역 셔틀 버스 시간 가져오기 GET
+  Future StationBusGetRequest(String day) async {
+    String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/1/$day";
+    final Uri url = Uri.parse(api);
+
+    final response = await http.get(url);
+    _text2 = utf8.decode(response.bodyBytes);
+    var dataObjsJson = jsonDecode(_text2)['data'] as List;
+    final List<Data> parsedResponse =
+        dataObjsJson.map((dataJson) => Data.fromJson(dataJson)).toList();
+
+    setState(() {
+      _datas2.clear();
+      _datas2.addAll(parsedResponse);
     });
     print(parsedResponse);
   }
@@ -330,40 +383,8 @@ class _BusHomeState extends State<BusHome> {
                             SizedBox(
                               width: 15,
                             ),
-                            // FutureBuilder(builder:
-                            //     (BuildContext context, AsyncSnapshot snapshot) {
-                            //   //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.
-                            //   if (snapshot.hasData == false) {
-                            //     return IconButton(
-                            //       onPressed: RefreshTime,
-                            //       icon: Icon(Icons.refresh_outlined),
-                            //       iconSize: 30,
-                            //     );
-                            //   }
-                            //   //error가 발생하게 될 경우 반환하게 되는 부분
-                            //   else if (snapshot.hasError) {
-                            //     return Padding(
-                            //       padding: const EdgeInsets.all(8.0),
-                            //       child: Text(
-                            //         'Error: ${snapshot.error}',
-                            //         style: TextStyle(fontSize: 15),
-                            //       ),
-                            //     );
-                            //   }
-                            //   // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
-                            //   else {
-                            //     return Padding(
-                            //       padding: const EdgeInsets.all(8.0),
-                            //       child: IconButton(
-                            //         onPressed: RefreshTime,
-                            //         icon: Icon(Icons.refresh_outlined),
-                            //         iconSize: 30,
-                            //       ),
-                            //     );
-                            //   }
-                            // }),
                             IconButton(
-                              onPressed: ChangeTime,
+                              onPressed: RefreshBusTime,
                               icon: Icon(Icons.refresh_outlined),
                               iconSize: 30,
                             ),
@@ -481,7 +502,7 @@ class _BusHomeState extends State<BusHome> {
                             // ChangeTime(); //몇 분 남았는지 가져오게 하는 함수
 
                             return Text(
-                                ChangeTime()); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
+                                SchoolBusChangeTime()); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
 
                           }
                         })
@@ -534,7 +555,38 @@ class _BusHomeState extends State<BusHome> {
                         bottomRight: Radius.circular(5),
                         topRight: Radius.circular(5))),
                 child: Column(
-                  children: [Text("후문정류장에서"), Text("2분 뒤 출발")],
+                  children: [
+                    Text("후문정류장에서"),
+                    FutureBuilder(
+                        future: _fetch2(),
+                        builder:
+                            (BuildContext content, AsyncSnapshot snapshot) {
+                          //해당 부분은 data를 아직 받아오지 못했을 떄 실행
+                          if (snapshot.hasData == false) {
+                            return Text("데이터를 받아오는 중...");
+                            // CircularProgressIndicator();
+                          }
+                          //error가 발생하게 될 경우 반환하게 되는 부분
+                          else if (snapshot.hasError) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Error: ${snapshot.error}',
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            );
+                          }
+                          //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
+                          else {
+                            // ChangeTime(); //몇 분 남았는지 가져오게 하는 함수
+
+                            return Text(
+                                StationBusChangeTime()); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
+
+                          }
+                        })
+                    // Text(this._datas[0].busTime)
+                  ],
                 ),
               ),
             )
@@ -618,6 +670,11 @@ class Data {
 }
 
 Future<String> _fetch() async {
+  await Future.delayed(Duration(seconds: 1));
+  return 'Call Data';
+}
+
+Future<String> _fetch2() async {
   await Future.delayed(Duration(seconds: 1));
   return 'Call Data';
 }
