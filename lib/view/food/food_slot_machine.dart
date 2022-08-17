@@ -58,6 +58,48 @@ class _FoodSlotMachineState extends State<FoodSlotMachine> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> initData = [];
+
+    return FutureBuilder(
+        future: widget.controller.makeSlotByCategory(1),
+        initialData: initData,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData == false) {
+            return CircularProgressIndicator();
+          } else {
+            return Container(
+              child: Stack(
+                children: [
+                  Container(
+                    color: Colors.white,
+                    child: ListWheelScrollView.useDelegate(
+                      controller: widget.controller.getController(),
+                      physics: const FixedExtentScrollPhysics(),
+                      itemExtent: 80,
+                      childDelegate: ListWheelChildLoopingListDelegate(
+                          children: snapshot.data),
+                      squeeze: 1.3,
+                      //useMagnifier: true,
+                      //magnification: 1.5,
+                      onSelectedItemChanged: (value) {},
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    child: Opacity(
+                      opacity: 0.9,
+                      child: Image(
+                          fit: BoxFit.fill,
+                          image: AssetImage('assets/img_shadow.png')),
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+        });
+    /*
     return Container(
       color: Colors.white,
       child: ListWheelScrollView.useDelegate(
@@ -69,10 +111,10 @@ class _FoodSlotMachineState extends State<FoodSlotMachine> {
         squeeze: 1.3,
         //useMagnifier: true,
         //magnification: 1.5,
-        onSelectedItemChanged: (value) {
-          print(value);
-        },
+        onSelectedItemChanged: (value) {},
       ),
     );
+  }
+  */
   }
 }

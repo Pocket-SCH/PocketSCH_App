@@ -12,7 +12,7 @@ import 'package:pocket_sch/view/bus/alarm/runAlarm.dart';
 import 'package:pocket_sch/view/bus/schoolbus_choice.dart';
 import 'package:pocket_sch/view/bus/bus_home.dart';
 import 'package:pocket_sch/view/bus/stationbus_choice.dart';
-import 'package:pocket_sch/view/eat_home.dart';
+import 'package:pocket_sch/view/food/food_category.dart';
 import 'package:pocket_sch/view/food/food_slot.dart';
 import 'package:pocket_sch/view/notify/notify_home.dart';
 import 'package:flutter/services.dart';
@@ -74,7 +74,7 @@ class MyApp extends StatelessWidget {
               )),
 
           GetPage(name: '/bus', page: () => BusHome()),
-          GetPage(name: '/food/slot', page: () => FoodSlot()),
+          GetPage(name: '/food/category', page: () => FoodCategory()),
           GetPage(
               name: '/alarm',
               page: () => AlarmPage(),
