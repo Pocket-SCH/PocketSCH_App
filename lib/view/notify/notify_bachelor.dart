@@ -97,7 +97,7 @@ class Notify_bachelor extends StatelessWidget {
                             height: height * 0.06,
                             child: TextButton(
                               onPressed: () {
-                                usedNotifyController.callApi(index);
+                                usedNotifyController.callBachelorApi(index);
                               },
                               child: Text('${index + 1}'),
                             ),
