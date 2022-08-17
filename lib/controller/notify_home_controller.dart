@@ -6,6 +6,12 @@ import 'dart:convert';
 import 'package:pocket_sch/controller/token_controller.dart';
 
 class notifyController extends GetxController {
+  @override
+  void onInit() async {
+    super.onInit();
+    callApi(0);
+  }
+
   RxString whichPage = 'academy'.obs;
   //기본 공지 = academy / 학사공지 = bachelor / key 공지 = keyword
   void changePage(string) {

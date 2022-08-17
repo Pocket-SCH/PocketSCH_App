@@ -78,21 +78,49 @@ class Notify_keyWord extends StatelessWidget {
                 );
               }),
         ),
-        Container(
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: EdgeInsets.zero,
-                fixedSize: Size(width * 0.14, width * 0.14),
-                primary: Color(0xff78c5bd)),
-            onPressed: () {
-              Get.toNamed('notify/regKeyword');
-            },
-            child: Icon(
-              Icons.add,
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Container(
+              width: width * 0.7,
+              height: height * 0.06,
+              child: usedNotifyController.allResponseJson['data']
+                          ['totalPages'] ==
+                      'first'
+                  ? Text('')
+                  : Container(
+                      alignment: Alignment.center,
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: usedNotifyController
+                              .allResponseJson['data']['totalPages'],
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (BuildContext context, index) {
+                            return Container(
+                              height: height * 0.06,
+                              child: TextButton(
+                                onPressed: () {
+                                  usedNotifyController.callApi(index);
+                                },
+                                child: Text('${index + 1}'),
+                              ),
+                            );
+                          }))),
+          Container(
+            padding: EdgeInsets.only(right: width * 0.02),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  shape: const CircleBorder(),
+                  padding: EdgeInsets.zero,
+                  fixedSize: Size(width * 0.14, width * 0.14),
+                  primary: Color(0xff78c5bd)),
+              onPressed: () {
+                Get.toNamed('notify/regKeyword');
+              },
+              child: Icon(
+                Icons.add,
+              ),
             ),
-          ),
-        )
+          )
+        ])
       ]),
     );
   }
