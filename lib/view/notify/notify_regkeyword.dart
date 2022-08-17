@@ -112,7 +112,9 @@ class _NotifyRegKeywordState extends State<NotifyRegKeyword> {
                                                 Size(width / 15, width / 15),
                                             shape: CircleBorder()),
                                         onPressed: () {
-                                          if (_addKeywordController.text.length >= 2) {
+                                          if (_addKeywordController
+                                                  .text.length >=
+                                              2) {
                                             regKeyword(
                                                 _addKeywordController.text);
                                             _addKeywordController.clear();
