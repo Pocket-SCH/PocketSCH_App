@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,9 +24,15 @@ class FoodSlotController implements Disposable {
     return _controller;
   }
 
+  //구동부분
   void start() {
-    _controller.animateToItem(500,
-        duration: const Duration(seconds: 25), curve: Curves.decelerate);
+    // 랜덤한 시간을 가지고 돌리기 시작
+    // 5~8초까지의 랜덤한 시간동안 돌아가게 함
+    _controller.jumpToItem(0);
+    int randomDuration = Random().nextInt(8) + 5;
+    int randomItem = Random().nextInt(300) + 100;
+    _controller.animateToItem(randomItem,
+        duration: Duration(seconds: randomDuration), curve: Curves.decelerate);
   }
 
   //데이터를 받아오는 곧
