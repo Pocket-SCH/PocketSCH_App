@@ -35,6 +35,15 @@ class FoodSlotController implements Disposable {
         duration: Duration(seconds: randomDuration), curve: Curves.decelerate);
   }
 
+  int serverAdapter(int categoryId) {
+    int returnVal = -1;
+    switch (categoryId) {
+      default:
+        returnVal = 4;
+    }
+    return returnVal;
+  }
+
   //데이터를 받아오는 곧
   Future<List<String>> getData(int categoryId) async {
     List<String> tmp = [];
@@ -44,7 +53,7 @@ class FoodSlotController implements Disposable {
         'GET',
         Uri.parse(
             'http://13.209.200.114:8080/pocket-sch/v1/food/food-list/category/' +
-                categoryId.toString()));
+                serverAdapter(categoryId).toString()));
 
     request.headers.addAll(headers);
 
@@ -54,6 +63,7 @@ class FoodSlotController implements Disposable {
       var parseData = await http.Response.fromStream(response);
       var body = utf8.decode(parseData.bodyBytes);
       var data = jsonDecode(body);
+      print(data);
       List list = data['data'];
       for (Map a in list) {
         tmp.add(a['name']);

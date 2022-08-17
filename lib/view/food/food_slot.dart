@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pocket_sch/controller/solid_button_builder.dart';
+import 'package:pocket_sch/view/food/food_category.dart';
 import 'package:pocket_sch/view/food/food_slot_controller.dart';
 import 'package:pocket_sch/view/food/food_slot_machine.dart';
 import '../../custom_color.dart';
@@ -30,7 +31,7 @@ class _FoodSlotState extends State<FoodSlot> {
         leading: IconButton(
           icon: Image.asset('assets/btn_back.png',
               color: Color.fromARGB(255, 0, 0, 0), width: 15),
-          onPressed: () => Get.back(),
+          onPressed: () => Get.off(() => FoodCategory()),
         ),
       ),
       body: Padding(

@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pocket_sch/view/food/food_slot.dart';
 import '../../custom_color.dart';
 
 class FoodCategory extends StatefulWidget {
@@ -15,6 +16,8 @@ class _FoodCategoryState extends State<FoodCategory> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: CustomColor.background,
       appBar: AppBar(
@@ -60,31 +63,42 @@ class _FoodCategoryState extends State<FoodCategory> {
                     ),
                     child: Column(children: [
                       Expanded(
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: PieChart(
-                            PieChartData(
-                                pieTouchData: PieTouchData(touchCallback:
-                                    (FlTouchEvent event, pieTouchResponse) {
-                                  setState(() {
-                                    if (!event.isInterestedForInteractions ||
-                                        pieTouchResponse == null ||
-                                        pieTouchResponse.touchedSection ==
-                                            null) {
-                                      touchedIndex = -1;
-                                      return;
-                                    }
-                                    touchedIndex = pieTouchResponse
-                                        .touchedSection!.touchedSectionIndex;
-                                  });
-                                }),
-                                borderData: FlBorderData(
-                                  show: false,
-                                ),
-                                sectionsSpace: 2,
-                                centerSpaceRadius: 40,
-                                sections: showingSections()),
-                          ),
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Text('오늘은...',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xff000000))),
+                            ),
+                            PieChart(
+                              PieChartData(
+                                  pieTouchData: PieTouchData(touchCallback:
+                                      (FlTouchEvent event, pieTouchResponse) {
+                                    setState(() {
+                                      if (!event.isInterestedForInteractions ||
+                                          pieTouchResponse == null ||
+                                          pieTouchResponse.touchedSection ==
+                                              null) {
+                                        touchedIndex = -1;
+                                        return;
+                                      }
+                                      touchedIndex = pieTouchResponse
+                                          .touchedSection!.touchedSectionIndex;
+                                    });
+
+                                    Get.off(() => FoodSlot(),
+                                        arguments: touchedIndex);
+                                  }),
+                                  borderData: FlBorderData(
+                                    show: false,
+                                  ),
+                                  sectionsSpace: 5,
+                                  centerSpaceRadius: screenWidth * 0.2,
+                                  sections: showingSections()),
+                            ),
+                          ],
                         ),
                       )
                     ]),
@@ -99,54 +113,98 @@ class _FoodCategoryState extends State<FoodCategory> {
   }
 
   List<PieChartSectionData> showingSections() {
-    return List.generate(4, (i) {
+    return List.generate(8, (i) {
       final isTouched = i == touchedIndex;
-      final fontSize = isTouched ? 25.0 : 16.0;
+      final fontSize = isTouched ? 25.0 : 15.0;
       final radius = isTouched ? 60.0 : 50.0;
       switch (i) {
         case 0:
           return PieChartSectionData(
-            color: const Color(0xff0293ee),
-            value: 40,
-            title: '40%',
+            color: const Color(0xffEBEB81),
+            value: 1,
+            title: '분식',
             radius: radius,
             titleStyle: TextStyle(
                 fontSize: fontSize,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xffffffff)),
+                color: const Color(0xff000000)),
           );
         case 1:
           return PieChartSectionData(
-            color: const Color(0xfff8b250),
-            value: 30,
-            title: '30%',
+            color: const Color(0xfffC2E49C),
+            value: 1,
+            title: '치킨',
             radius: radius,
             titleStyle: TextStyle(
                 fontSize: fontSize,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xffffffff)),
+                color: const Color(0xff000000)),
           );
         case 2:
           return PieChartSectionData(
-            color: const Color(0xff845bef),
-            value: 15,
-            title: '15%',
+            color: const Color(0xffB7E3DF),
+            value: 1,
+            title: '한식',
             radius: radius,
             titleStyle: TextStyle(
                 fontSize: fontSize,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xffffffff)),
+                color: const Color(0xff000000)),
           );
         case 3:
           return PieChartSectionData(
-            color: const Color(0xff13d38e),
-            value: 15,
-            title: '15%',
+            color: const Color(0xff7DCDC5),
+            value: 1,
+            title: '라면',
             radius: radius,
             titleStyle: TextStyle(
                 fontSize: fontSize,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xffffffff)),
+                color: const Color(0xff000000)),
+          );
+        case 4:
+          return PieChartSectionData(
+            color: const Color(0xffCDA4E4),
+            value: 1,
+            title: '중식',
+            radius: radius,
+            titleStyle: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xff000000)),
+          );
+        case 5:
+          return PieChartSectionData(
+            color: const Color(0xffEDA5ED),
+            value: 1,
+            title: '일식',
+            radius: radius,
+            titleStyle: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xff000000)),
+          );
+        case 6:
+          return PieChartSectionData(
+            color: const Color(0xffEDA1A1),
+            value: 1,
+            title: '고기',
+            radius: radius,
+            titleStyle: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xff000000)),
+          );
+        case 7:
+          return PieChartSectionData(
+            color: const Color(0xffF3D079),
+            value: 1,
+            title: '기타',
+            radius: radius,
+            titleStyle: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xff000000)),
           );
         default:
           throw Error();
