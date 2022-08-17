@@ -117,52 +117,47 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     double w = 335;
     double h = 60;
 
-    return InkWell(
-      onTap: () {
-        Get.toNamed('busChoice');
-      },
-      child: Container(
-        width: w,
-        height: h,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            boxShadow: [
-              BoxShadow(
-                  color: const Color(0x29000000),
-                  offset: Offset(0, 0),
-                  blurRadius: 6,
-                  spreadRadius: 0)
-            ],
-            color: Color(0xff87aaaa)),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 10,
-            ),
-            Container(
-              width: w * 0.4,
-              height: h,
-              child: Container(
-                  margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(5),
-                          topLeft: Radius.circular(5))),
-                  child: Center(child: Text(str1))),
-            ),
-            Container(
-              width: w * 0.5,
-              height: h,
-              child: Center(
-                  child: Text(str2,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400))),
-            ),
+    return Container(
+      width: w,
+      height: h,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          boxShadow: [
+            BoxShadow(
+                color: const Color(0x29000000),
+                offset: Offset(0, 0),
+                blurRadius: 6,
+                spreadRadius: 0)
           ],
-        ),
+          color: Color(0xff87aaaa)),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 10,
+          ),
+          Container(
+            width: w * 0.4,
+            height: h,
+            child: Container(
+                margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(5),
+                        topLeft: Radius.circular(5))),
+                child: Center(child: Text(str1))),
+          ),
+          Container(
+            width: w * 0.5,
+            height: h,
+            child: Center(
+                child: Text(str2,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400))),
+          ),
+        ],
       ),
     );
   }

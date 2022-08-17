@@ -13,6 +13,7 @@ import 'package:pocket_sch/view/bus/schoolbus_choice.dart';
 import 'package:pocket_sch/view/bus/bus_home.dart';
 import 'package:pocket_sch/view/bus/stationbus_choice.dart';
 import 'package:pocket_sch/view/eat_home.dart';
+import 'package:pocket_sch/view/food/food_slot.dart';
 import 'package:pocket_sch/view/notify/notify_home.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
                       () => RegKeywordController());
                 },
               )),
+
           GetPage(
               name: '/notify',
               page: () => NotifyHome(),
@@ -70,8 +72,9 @@ class MyApp extends StatelessWidget {
                   Get.lazyPut<notifyController>(() => notifyController());
                 },
               )),
+
           GetPage(name: '/bus', page: () => BusHome()),
-          GetPage(name: '/eat', page: () => EatHome()),
+          GetPage(name: '/food/slot', page: () => FoodSlot()),
           GetPage(
               name: '/alarm',
               page: () => AlarmPage(),

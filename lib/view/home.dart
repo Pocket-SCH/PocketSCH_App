@@ -94,7 +94,7 @@ class Home extends StatelessWidget {
               width: width / 2,
               child: ElevatedButton(
                 onPressed: () {
-                  Get.toNamed('eat');
+                  Get.toNamed('food/slot');
                 },
                 child: Padding(
                     padding: EdgeInsets.fromLTRB(20, 5, 30, 5),

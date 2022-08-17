@@ -1,10 +1,15 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,15 +32,130 @@ class BusHome extends StatefulWidget {
 class _BusHomeState extends State<BusHome> {
   File? _image;
 
+  var _text;
+
+  List<Data> _datas = [];
+
   void initState() {
     super.initState();
+    print(_datas);
+
+    // _datas.addAll([
+    //   {"id": 0, "type": 0, "busTime": "0000", "busWeekDay": 1}
+    // ]);
+    //   int id;
+    // int type;
+    // String busTime;"
+    // int busWeekDay;
+    String changed_day = changeDay();
+
+    SchoolBusGetRequest(changed_day);
+
     ImageGetRequest();
+  }
+
+  String getCurrentDay() {
+    DateTime now = DateTime.now();
+    initializeDateFormatting('ko_KR');
+    final _currentDay = DateFormat.E('ko_KR').format(now).toString();
+    return _currentDay;
+  }
+
+//학내순환 버스 Timer (몇분 남았는지 확인하기위해) - 리스트 보여주는 부분에도 쓰일 함수
+  String ChangeTime() {
+    // String time =
+    //     this._datas[0].busTime; //첫 번쨰 버스 시간을 가져온거임 -> 가까운 시간을 가져올 수 있도록 하기
+
+    var time_list = [];
+    int min;
+    var initM;
+
+    for (int i = 0; i < this._datas.length; i++) {
+      String time = this._datas[i].busTime;
+
+      // String time_list=this._datas[0]
+      final splitted = time.split('T');
+      print(splitted[1]);
+      DateTime formattedTime2 = DateFormat("hh:mm").parse(splitted[1]);
+
+      DateTime now = DateTime.now();
+      String formattedTime = DateFormat('kk:mm').format(now);
+      DateTime formattedTime1 = DateFormat("hh:mm").parse(formattedTime);
+      print("formateedTime: " + formattedTime);
+
+      Duration duration = formattedTime1.difference(formattedTime2);
+      print(duration.inSeconds); //계싼해서 나온 초
+
+      time_list.add(duration.inSeconds);
+    }
+    print(time_list);
+    min = time_list[0];
+    for (int j = 1; j < time_list.length; j++) {
+      if (time_list[j] < min && time_list[j] > 0) {
+        min = time_list[j];
+      }
+    }
+    print(min);
+
+    initM = min;
+    // var initM = 78;
+
+    double h, m;
+    int h1, m1;
+    double tmp;
+    h = initM / 3600;
+    h1 = h.toInt();
+    m = (initM % 3600) / 60;
+    m1 = m.toInt();
+
+    String result = "$h1:$m1"; //남은 시간
+
+    print(result);
+    return result;
+  }
+
+  String changeDay() {
+    String day = getCurrentDay();
+    if (day == "월")
+      return "1";
+    else if (day == "화")
+      return "2";
+    else if (day == "수")
+      return "3";
+    else if (day == "목")
+      return "4";
+    else if (day == "금")
+      return "5";
+    else if (day == "토")
+      return "6";
+    else if (day == "일") return "0";
+    return "7";
+  }
+
+//학내 순환 버스 시간 가져오기 GET
+  Future SchoolBusGetRequest(String day) async {
+    String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/0/$day";
+    final Uri url = Uri.parse(api);
+
+    final response = await http.get(url);
+    _text = utf8.decode(response.bodyBytes);
+    var dataObjsJson = jsonDecode(_text)['data'] as List;
+    final List<Data> parsedResponse =
+        dataObjsJson.map((dataJson) => Data.fromJson(dataJson)).toList();
+
+    setState(() {
+      _datas.clear();
+      _datas.addAll(parsedResponse);
+    });
+    print(parsedResponse);
   }
 
   @override
   Widget build(BuildContext context) {
     double screen_width = MediaQuery.of(context).size.width;
     double screen_height = MediaQuery.of(context).size.height;
+
+    getCurrentDay();
     return Scaffold(
       backgroundColor: CustomColor.background,
       appBar: AppBar(
@@ -104,17 +224,30 @@ class _BusHomeState extends State<BusHome> {
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500)),
                                 SizedBox(
-                                  height: 10,
+                                  height: 5,
                                 ),
                                 TimerBuilder.periodic(
                                     const Duration(seconds: 1),
                                     builder: (context) {
                                   return Text(
-                                    formatDate(DateTime.now(),
-                                        [hh, ':', nn, ':', ss, ' ', am]),
+                                    formatDate(DateTime.now(), [
+                                      MM,
+                                      ' ',
+                                      dd,
+                                      ' ',
+                                      getCurrentDay(),
+                                      '\n',
+                                      hh,
+                                      ':',
+                                      nn,
+                                      ':',
+                                      ss,
+                                      ' ',
+                                      am
+                                    ]),
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
-                                      fontSize: 40,
+                                      fontSize: 20,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w400,
                                     ),
@@ -225,7 +358,38 @@ class _BusHomeState extends State<BusHome> {
                         bottomRight: Radius.circular(5),
                         topRight: Radius.circular(5))),
                 child: Column(
-                  children: [Text("후문정류장에서"), Text("2분 뒤 출발")],
+                  children: [
+                    Text("후문정류장에서"),
+                    FutureBuilder(
+                        future: _fetch(),
+                        builder:
+                            (BuildContext content, AsyncSnapshot snapshot) {
+                          //해당 부분은 data를 아직 받아오지 못했을 떄 실행
+                          if (snapshot.hasData == false) {
+                            return Text("데이터를 받아오는 중...");
+                            // CircularProgressIndicator();
+                          }
+                          //error가 발생하게 될 경우 반환하게 되는 부분
+                          else if (snapshot.hasError) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Error: ${snapshot.error}',
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            );
+                          }
+                          //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
+                          else {
+                            // ChangeTime(); //몇 분 남았는지 가져오게 하는 함수
+
+                            return Text(
+                                ChangeTime()); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
+
+                          }
+                        })
+                    // Text(this._datas[0].busTime) //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
+                  ],
                 ),
               ),
             )
@@ -336,4 +500,27 @@ class _BusHomeState extends State<BusHome> {
       print(response.reasonPhrase);
     }
   }
+}
+
+class Data {
+  int id;
+  int type;
+  String busTime;
+  int busWeekDay;
+
+  Data(this.id, this.type, this.busTime, this.busWeekDay);
+
+  factory Data.fromJson(dynamic json) {
+    return Data(json['id'] as int, json['type'] as int,
+        json['busTime'] as String, json['busWeekDay'] as int);
+  }
+  @override
+  String toString() {
+    return '{${this.id}, ${this.type}, ${this.busTime}, ${this.busWeekDay}}';
+  }
+}
+
+Future<String> _fetch() async {
+  await Future.delayed(Duration(seconds: 1));
+  return 'Call Data';
 }
