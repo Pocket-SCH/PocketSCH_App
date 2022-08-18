@@ -112,53 +112,84 @@ class _BusHomeState extends State<BusHome> {
 //학내순환 버스 Timer (몇분 남았는지 확인하기위해) - 리스트 보여주는 부분에도 쓰일 함수
   String SchoolBusChangeTime() {
     var time_list = [];
-    int min;
+    var not_time_list = [];
+    int min, not_min;
     var initM;
 
-    double m;
-    int m1;
+    double m, h;
+    int m1, h1;
 
     for (int i = 0; i < this._datas.length; i++) {
       String time = this._datas[i].busTime;
 
       // String time_list=this._datas[0]
       final splitted = time.split('T');
-      // print("학내순환 시간 : " + splitted[1]); //학내순환이니까 10분 간격으로 나옴
+      print("학내순환 시간 : " + splitted[1]); //학내순환이니까 10분 간격으로 나옴
       DateTime formattedTime2 = DateFormat("hh:mm").parse(splitted[1]);
 
       DateTime now = DateTime.now();
       String formattedTime = DateFormat('kk:mm').format(now);
-      // print("현재시간 : " + formattedTime);
+      print("현재시간 : " + formattedTime);
       DateTime formattedTime1 = DateFormat("hh:mm").parse(formattedTime);
       // print("formateedTime: " + formattedTime);
 
       Duration duration = formattedTime2.difference(formattedTime1);
-      // print(duration.inSeconds); //계산해서 나온 초
+      print(duration.inSeconds); //계산해서 나온 초
 
       if (duration.inSeconds >= 0) {
         time_list.add(duration.inSeconds);
+      } else {
+        time_list.add(null);
+      }
+
+      not_time_list.add(duration.inSeconds);
+    }
+
+    print("데이터 정제 전 :");
+    print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
+    print(not_time_list);
+
+    String check = '0';
+
+    for (int i = 0; i < time_list.length; i++) {
+      if (not_time_list[i] == 1) {
+        //갈 수 있는 시간이 하나라도 있음
+        check = '0';
+      } else {
+        check = '1';
+        break;
       }
     }
-    // print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
-
+    // print("check: " + check);
+    time_list.removeWhere((e) => e == null);
+    time_list.add(0);
+    // print(time_list);
     min = time_list[0];
+    not_min = not_time_list[0];
     // print(min); //가장 얼마 안남은 시간
 
     initM = min;
 
-    // h = initM / 3600;
-    // h1 = h.toInt();
+    h = initM / 3600;
+    h1 = h.toInt();
     m = (initM % 3600) / 60;
     m1 = m.toInt();
 
-    String result = "$m1분 뒤 출발"; //남은 시간
-    return result;
+    if (check == '1' && time_list.length != 1) {
+      if (h1 == 0) return "$m1분 뒤 출발";
+      return "$h1시간 $m1분 뒤 출발";
+    }
+
+    return "버스 없음";
+    // String result = "$m1분 뒤 출발"; //남은 시간
+    // return result;
   }
 
 //신창역 셔틀 버스 Timer
   String StationBusChangeTime() {
     var time_list = [];
-    int min;
+    var not_time_list = [];
+    int min, not_min;
     var initM;
 
     double m, h;
@@ -169,12 +200,12 @@ class _BusHomeState extends State<BusHome> {
 
       // String time_list=this._datas[0]
       final splitted = time.split('T');
-      // print("학내순환 시간 : " + splitted[1]); //학내순환이니까 10분 간격으로 나옴
+      // print("신창역 셔틀 시간 : " + splitted[1]); //학내순환이니까 10분 간격으로 나옴
       DateTime formattedTime2 = DateFormat("hh:mm").parse(splitted[1]);
 
       DateTime now = DateTime.now();
       String formattedTime = DateFormat('kk:mm').format(now);
-      // print("현재시간 : " + formattedTime);
+      // print("신창역 셔틀 현재시간 : " + formattedTime);
       DateTime formattedTime1 = DateFormat("hh:mm").parse(formattedTime);
       // print("formateedTime: " + formattedTime);
 
@@ -183,11 +214,34 @@ class _BusHomeState extends State<BusHome> {
 
       if (duration.inSeconds >= 0) {
         time_list.add(duration.inSeconds);
+      } else {
+        time_list.add(null);
+      }
+
+      not_time_list.add(duration.inSeconds);
+    }
+
+    // print("데이터 정제 전 :");
+    // print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
+    // print(not_time_list);
+
+    String check = '0';
+
+    for (int i = 0; i < time_list.length; i++) {
+      if (not_time_list[i] == 1) {
+        //갈 수 있는 시간이 하나라도 있음
+        check = '0';
+      } else {
+        check = '1';
+        break;
       }
     }
-    // print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
-
+    // print("check: " + check);
+    time_list.removeWhere((e) => e == null);
+    time_list.add(0);
+    // print(time_list);
     min = time_list[0];
+    not_min = not_time_list[0];
     // print(min); //가장 얼마 안남은 시간
 
     initM = min;
@@ -197,8 +251,15 @@ class _BusHomeState extends State<BusHome> {
     m = (initM % 3600) / 60;
     m1 = m.toInt();
 
-    String result = "$h1시간 $m1분 뒤 출발"; //남은 시간
-    return result;
+    if (check == '1' && time_list.length != 1) {
+      if (h1 == 0) return "$m1분 뒤 출발";
+      return "$h1시간 $m1분 뒤 출발";
+    }
+
+    return "버스 없음";
+
+    // String result = "$h1시간 $m1분 뒤 출발"; //남은 시간
+    // return result;
   }
 
   String changeDay() {
@@ -497,6 +558,9 @@ class _BusHomeState extends State<BusHome> {
                               ),
                             );
                           }
+                          // else if (SchoolBusChangeTime() == "버스 없음") {
+                          //   return Text(SchoolBusChangeTime());
+                          // }
                           //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
                           else {
                             // ChangeTime(); //몇 분 남았는지 가져오게 하는 함수
