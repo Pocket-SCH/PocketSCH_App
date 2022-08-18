@@ -21,6 +21,7 @@ import 'package:http/http.dart' as http;
 
 import '../../controller/token_controller.dart';
 import '../../custom_color.dart';
+import 'package:pocket_sch/view/bus/get_bus.dart';
 
 //버스 페이지 홈
 class BusHome extends StatefulWidget {
@@ -124,28 +125,29 @@ class _BusHomeState extends State<BusHome> {
 
       // String time_list=this._datas[0]
       final splitted = time.split('T');
-      print("학내순환 시간 : " + splitted[1]); //학내순환이니까 10분 간격으로 나옴
+      // print("학내순환 시간 : " + splitted[1]); //학내순환이니까 10분 간격으로 나옴
       DateTime formattedTime2 = DateFormat("hh:mm").parse(splitted[1]);
 
       DateTime now = DateTime.now();
       String formattedTime = DateFormat('kk:mm').format(now);
-      print("현재시간 : " + formattedTime);
+      // print("현재시간 : " + formattedTime);
       DateTime formattedTime1 = DateFormat("hh:mm").parse(formattedTime);
       // print("formateedTime: " + formattedTime);
 
       Duration duration = formattedTime2.difference(formattedTime1);
-      print(duration.inSeconds); //계산해서 나온 초
+      // print(duration.inSeconds); //계산해서 나온 초
 
       if (duration.inSeconds >= 0) {
         time_list.add(duration.inSeconds);
       } else {
-        time_list.add(null);
+        time_list.add(-duration.inSeconds);
       }
 
       not_time_list.add(duration.inSeconds);
     }
 
-    print("데이터 정제 전 :");
+    time_list.sort();
+    // print("데이터 정제 전 :");
     print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
     print(not_time_list);
 
@@ -161,7 +163,7 @@ class _BusHomeState extends State<BusHome> {
       }
     }
     // print("check: " + check);
-    time_list.removeWhere((e) => e == null);
+    time_list.removeWhere((e) => e == 1000000);
     time_list.add(0);
     // print(time_list);
     min = time_list[0];
@@ -215,12 +217,12 @@ class _BusHomeState extends State<BusHome> {
       if (duration.inSeconds >= 0) {
         time_list.add(duration.inSeconds);
       } else {
-        time_list.add(null);
+        time_list.add(-duration.inSeconds);
       }
 
       not_time_list.add(duration.inSeconds);
     }
-
+    time_list.sort();
     // print("데이터 정제 전 :");
     // print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
     // print(not_time_list);
@@ -237,7 +239,7 @@ class _BusHomeState extends State<BusHome> {
       }
     }
     // print("check: " + check);
-    time_list.removeWhere((e) => e == null);
+    time_list.removeWhere((e) => e == 1000000);
     time_list.add(0);
     // print(time_list);
     min = time_list[0];
@@ -712,24 +714,6 @@ class _BusHomeState extends State<BusHome> {
     } else {
       print(response.reasonPhrase);
     }
-  }
-}
-
-class Data {
-  int id;
-  int type;
-  String busTime;
-  int busWeekDay;
-
-  Data(this.id, this.type, this.busTime, this.busWeekDay);
-
-  factory Data.fromJson(dynamic json) {
-    return Data(json['id'] as int, json['type'] as int,
-        json['busTime'] as String, json['busWeekDay'] as int);
-  }
-  @override
-  String toString() {
-    return '{${this.id}, ${this.type}, ${this.busTime}, ${this.busWeekDay}}';
   }
 }
 
