@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pocket_sch/view/food/food_slot_controller.dart';
 
 class FoodSlotMachine extends StatefulWidget {
@@ -61,7 +62,7 @@ class _FoodSlotMachineState extends State<FoodSlotMachine> {
     List<Widget> initData = [];
 
     return FutureBuilder(
-        future: widget.controller.makeSlotByCategory(1),
+        future: widget.controller.makeSlotByCategory(Get.arguments),
         initialData: initData,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData == false) {

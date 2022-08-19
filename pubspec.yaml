@@ -49,6 +49,7 @@ dependencies:
   date_format: ^2.0.6
   fluttertoast: ^8.0.9
   fl_chart: ^0.55.1
+  confetti: ^0.7.0
 
 dev_dependencies:
   flutter_test:

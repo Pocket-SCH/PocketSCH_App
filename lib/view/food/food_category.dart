@@ -86,6 +86,8 @@ class _FoodCategoryState extends State<FoodCategory> {
                                       }
                                       touchedIndex = pieTouchResponse
                                           .touchedSection!.touchedSectionIndex;
+
+                                      print(touchedIndex);
                                     });
 
                                     Get.off(() => FoodSlot(),
