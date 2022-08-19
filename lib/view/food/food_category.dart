@@ -87,7 +87,8 @@ class _FoodCategoryState extends State<FoodCategory> {
                                       touchedIndex = pieTouchResponse
                                           .touchedSection!.touchedSectionIndex;
 
-                                      print(touchedIndex);
+                                      print('선택된 카테고리 인덱스 넘버: ' +
+                                          touchedIndex.toString());
                                     });
 
                                     Get.off(() => FoodSlot(),
