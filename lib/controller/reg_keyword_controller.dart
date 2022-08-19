@@ -4,16 +4,16 @@ import 'package:http/http.dart' as http;
 import 'package:pocket_sch/controller/token_controller.dart';
 import '../model/reg_keyword.dart';
 
-class RegKeywordController extends GetxController{
+class RegKeywordController extends GetxController {
   static RegKeywordController get to => Get.find();
   var keyList = <RegKeyword>[].obs;
-  
+
   @override
   void onInit() async {
     super.onInit();
     loadKeyword();
   }
-  
+
   //키워드 불러오기
   loadKeyword() async {
     var headers = {'Authorization': '${Get.find<TokenController>().token}'};
@@ -21,7 +21,7 @@ class RegKeywordController extends GetxController{
         Uri.parse('http://13.209.200.114:8080/pocket-sch/v1/info/keywords'));
 
     request.headers.addAll(headers);
-    
+
     http.StreamedResponse response = await request.send();
 
     if (response.statusCode == 200) {
@@ -30,7 +30,7 @@ class RegKeywordController extends GetxController{
       var data = jsonDecode(body);
       List list = data['data']['content'];
       keyList.clear();
-      for(Map a in list){
+      for (Map a in list) {
         keyList.add(RegKeyword(a['id'], a['keyword']));
       }
     } else {
