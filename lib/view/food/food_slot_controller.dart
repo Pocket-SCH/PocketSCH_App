@@ -33,6 +33,8 @@ class FoodSlotController implements Disposable {
     int randomItem = Random().nextInt(300) + 100;
     _controller.animateToItem(randomItem,
         duration: Duration(seconds: randomDuration), curve: Curves.decelerate);
+
+    // 파티클 효과 부분
   }
 
   int serverAdapter(int categoryId) {
@@ -53,7 +55,7 @@ class FoodSlotController implements Disposable {
         'GET',
         Uri.parse(
             'http://13.209.200.114:8080/pocket-sch/v1/food/food-list/category/' +
-                serverAdapter(categoryId).toString()));
+                categoryId.toString()));
 
     request.headers.addAll(headers);
 
@@ -77,7 +79,7 @@ class FoodSlotController implements Disposable {
 
   // 카드를 만들어 주는 곳
   Future<List<Widget>> makeSlotByCategory(int categoryId) async {
-    List<String> textTmp = await getData(1);
+    List<String> textTmp = await getData(categoryId);
     List<Widget> result = [];
     for (String text in textTmp) {
       result.add(Center(
