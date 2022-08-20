@@ -412,7 +412,7 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
 
     String check = '0';
     String hour, minute;
-    int hour1, minute1;
+    int hour1, minute1, hour2, minute2;
     for (int i = 0; i < time_list.length; i++) {
       if (not_time_list[i] == 1) {
         //갈 수 있는 시간이 하나라도 있음
@@ -443,12 +443,11 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     minute1 = int.parse(minute); //현재 시간
 
     minute1 = minute1 + m1;
+    hour1 = hour1 + h1;
     print(hour1);
     print(minute1);
 
-    if (check == '1' && time_list.length != 1) {
-      return "$hour1:$minute1";
-    }
+    if (check == '1' && time_list.length != 1) return "$hour1:$minute1";
 
     return "버스 없음";
   }
