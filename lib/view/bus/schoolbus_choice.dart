@@ -16,9 +16,10 @@ class SchoolBusChoice extends StatefulWidget {
 }
 
 class _SchoolBusChoiceState extends State<SchoolBusChoice> {
+  late String today = "월";
   void initState() {
     super.initState();
-
+    today = getCurrentDay();
     String changed_day = changeDay();
 
     SchoolBusGetRequest(changed_day);
@@ -89,8 +90,13 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
                 TextSpan(text: ' '),
                 TextSpan(
                     text: '학내순환 버스',
-                    style: TextStyle(color: Colors.black, fontSize: 18))
+                    style: TextStyle(color: Colors.black, fontSize: 18)),
               ])),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.refresh_outlined),
+                iconSize: 30,
+              ),
               SizedBox(
                 height: 15,
               ),
@@ -177,121 +183,8 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     return Container(
         child: SingleChildScrollView(
       child: Column(
-        //
         children: [
-          Container(
-            //한 블럭
-            width: w,
-            height: h,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(5)),
-                boxShadow: [
-                  BoxShadow(
-                      color: const Color(0x29000000),
-                      offset: Offset(0, 0),
-                      blurRadius: 6,
-                      spreadRadius: 0)
-                ],
-                color: Color(0xff87aaaa)),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  width: w * 0.4,
-                  height: h,
-                  child: Container(
-                      margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(5),
-                              topLeft: Radius.circular(5))),
-                      child: Center(
-                          child: FutureBuilder(
-                              future: _fetch3(),
-                              builder: (BuildContext content,
-                                  AsyncSnapshot snapshot) {
-                                //해당 부분은 data를 아직 받아오지 못했을 떄 실행
-                                if (snapshot.hasData == false) {
-                                  return Text(
-                                    "데이터를 받아오는 중...",
-                                    style: TextStyle(fontSize: 12),
-                                  );
-                                  // CircularProgressIndicator();
-                                }
-                                //error가 발생하게 될 경우 반환하게 되는 부분
-                                else if (snapshot.hasError) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      'Error: ${snapshot.error}',
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                  );
-                                }
-                                // else if (SchoolBusChangeTime() == "버스 없음") {
-                                //   return Text(SchoolBusChangeTime());
-                                // }
-                                //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
-                                else {
-                                  // ChangeTime(); //몇 분 남았는지 가져오게 하는 함수
-
-                                  return Text(
-                                    SchoolBusChangeTime(),
-                                    style: TextStyle(fontSize: 15),
-                                  ); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
-
-                                }
-                              }))),
-                ),
-                Container(
-                  width: w * 0.5,
-                  height: h,
-                  child: Center(
-                      child: FutureBuilder(
-                          future: _fetch3(),
-                          builder:
-                              (BuildContext content, AsyncSnapshot snapshot) {
-                            //해당 부분은 data를 아직 받아오지 못했을 떄 실행
-                            if (snapshot.hasData == false) {
-                              return Text(
-                                "데이터를 받아오는 중...",
-                                style: TextStyle(fontSize: 12),
-                              );
-                              // CircularProgressIndicator();
-                            }
-                            //error가 발생하게 될 경우 반환하게 되는 부분
-                            else if (snapshot.hasError) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Error: ${snapshot.error}',
-                                  style: TextStyle(fontSize: 15),
-                                ),
-                              );
-                            }
-                            // else if (SchoolBusChangeTime() == "버스 없음") {
-                            //   return Text(SchoolBusChangeTime());
-                            // }
-                            //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
-                            else {
-                              // ChangeTime(); //몇 분 남았는지 가져오게 하는 함수
-
-                              return Text(SchoolBusChangeTime1() + " 후문 정류장 출발",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight
-                                          .w400)); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
-
-                            }
-                          })),
-                ),
-              ],
-            ),
-          ), //여기까지가 한 블럭
+          for (int i = 0; i < 5; i++) timeblock(w, h), //여기까지가 한 블럭
           SizedBox(
             height: 15,
           ),
@@ -300,6 +193,129 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     ));
   }
 
+  Container timeblock(double w, double h) {
+    SizedBox(
+      height: 20,
+    );
+    return Container(
+      //한 블럭
+      width: w,
+      height: h,
+
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          boxShadow: [
+            BoxShadow(
+                color: const Color(0x29000000),
+                offset: Offset(0, 0),
+                blurRadius: 6,
+                spreadRadius: 0)
+          ],
+          color: Color(0xff87aaaa)),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 10,
+          ),
+          Container(
+            width: w * 0.4,
+            height: h,
+            child: Container(
+                margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(5),
+                        topLeft: Radius.circular(5))),
+                child: Center(
+                    child: FutureBuilder(
+                        future: _fetch3(),
+                        builder:
+                            (BuildContext content, AsyncSnapshot snapshot) {
+                          //해당 부분은 data를 아직 받아오지 못했을 떄 실행
+                          if (snapshot.hasData == false) {
+                            return Text(
+                              "데이터를 받아오는 중...",
+                              style: TextStyle(fontSize: 12),
+                            );
+                            // CircularProgressIndicator();
+                          }
+                          //error가 발생하게 될 경우 반환하게 되는 부분
+                          else if (snapshot.hasError) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Error: ${snapshot.error}',
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            );
+                          }
+                          //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
+                          else {
+                            // ChangeTime(); //몇 분 남았는지 가져오게 하는 함수
+
+                            return Text(
+                              SchoolBusChangeTime(),
+                              style: TextStyle(fontSize: 15),
+                            ); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
+
+                          }
+                        }))),
+          ),
+          Container(
+            width: w * 0.5,
+            height: h,
+            child: Center(
+                child: FutureBuilder(
+                    future: _fetch3(),
+                    builder: (BuildContext content, AsyncSnapshot snapshot) {
+                      //해당 부분은 data를 아직 받아오지 못했을 떄 실행
+                      if (snapshot.hasData == false) {
+                        return Text(
+                          "데이터를 받아오는 중...",
+                          style: TextStyle(fontSize: 12),
+                        );
+                        // CircularProgressIndicator();
+                      }
+                      //error가 발생하게 될 경우 반환하게 되는 부분
+                      else if (snapshot.hasError) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Error: ${snapshot.error}',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        );
+                      }
+                      // else if (SchoolBusChangeTime() == "버스 없음") {
+                      //   return Text(SchoolBusChangeTime());
+                      // }
+                      else if (today == "토") {
+                        return Text(
+                          "버스가 없습니다",
+                          style: TextStyle(height: 2.2),
+                        );
+                      }
+                      //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
+                      else {
+                        // ChangeTime(); //몇 분 남았는지 가져오게 하는 함수
+
+                        return Text(SchoolBusChangeTime1() + " 후문 정류장 출발",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight
+                                    .w400)); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
+
+                      }
+                    })),
+          ),
+        ],
+      ),
+    );
+  }
+
+//왼쪽 블럭
   String SchoolBusChangeTime() {
     var time_list = [];
     var not_time_list = [];
@@ -326,38 +342,47 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
       Duration duration = formattedTime2.difference(formattedTime1);
       // print(duration.inSeconds); //계산해서 나온 초
 
+      // if (duration.inSeconds >= 0) {
+      //   time_list.add(duration.inSeconds);
+      // } else {
+      //   time_list.add(-duration.inSeconds);
+      // }
+
+      // if (duration.inSeconds >= 0) time_list.add(duration.inSeconds);
       if (duration.inSeconds >= 0) {
         time_list.add(duration.inSeconds);
       } else {
-        time_list.add(-duration.inSeconds);
+        time_list.add(1000000);
       }
-
       not_time_list.add(duration.inSeconds);
     }
+    // print(time_list);
 
-    time_list.sort();
     // print("데이터 정제 전 :");
     // print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
     // print(not_time_list);
 
-    String check = '0';
+    // String check = '0';
+    //버스가 없는 경우도 생각해야함.
 
-    for (int i = 0; i < time_list.length; i++) {
-      if (not_time_list[i] == 1) {
-        //갈 수 있는 시간이 하나라도 있음
-        check = '0';
-      } else {
-        check = '1';
-        break;
-      }
-    }
+    // for (int i = 0; i < time_list.length; i++) {
+    //   if (not_time_list[i] == 1) {
+    //     //갈 수 있는 시간이 하나라도 있음
+    //     check = '0';
+    //   } else {
+    //     check = '1';
+    //     break;
+    //   }
+    // }
     // print("check: " + check);
+    time_list.sort();
     time_list.removeWhere((e) => e == 1000000);
-    time_list.add(0);
-    // print(time_list);
+
+    time_list.add(1000000);
+    print(time_list);
     min = time_list[0];
-    not_min = not_time_list[0];
-    // print(min); //가장 얼마 안남은 시간
+    // not_min = not_time_list[0];
+    print(min); //가장 얼마 안남은 시간
 
     initM = min;
 
@@ -365,17 +390,26 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     h1 = h.toInt();
     m = (initM % 3600) / 60;
     m1 = m.toInt();
+    print(h1);
+    print(m1);
 
-    if (check == '1' && time_list.length != 1) {
+    if (initM == 1000000) {
+      // time_list.removeWhere((e) => e == 1000000);
+      return "버스 운행이\n종료되었습니다";
+    }
+
+    // if (check == '1' && time_list.length != 1) {
+    if (time_list.length != 1) {
       if (h1 == 0) return "$m1분 뒤 출발";
       return "$h1시간 $m1분 뒤 출발";
     }
 
-    return "버스 없음";
+    return "   버스 운행이\n종료되었습니다";
     // String result = "$m1분 뒤 출발"; //남은 시간
     // return result;
   }
 
+//오른쪽 블럭
   String SchoolBusChangeTime1() {
     var time_list = [];
     var not_time_list = [];
@@ -409,6 +443,7 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     }
 
     time_list.sort();
+    print(time_list);
 
     String check = '0';
     String hour, minute;
@@ -444,8 +479,8 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
 
     minute1 = minute1 + m1;
     hour1 = hour1 + h1;
-    print(hour1);
-    print(minute1);
+    // print(hour1);
+    // print(minute1);
 
     if (check == '1' && time_list.length != 1) return "$hour1:$minute1";
 
