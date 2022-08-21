@@ -23,8 +23,15 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     String changed_day = changeDay();
 
     SchoolBusGetRequest(changed_day);
+    // contents();
+    // SchoolBusChangeTime();
+    // print("버스 시간");
+    // print(busTime_list);
+    // getBusBox("0분 뒤 출발", "10:10 후문 정류장 출발");
     // SchoolBusGetRequest1(changed_day);
   }
+
+  var busTime_list = [];
 
   var _text;
   List<Data> _datas = [];
@@ -55,6 +62,30 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     final _currentDay = DateFormat.E('ko_KR').format(now).toString();
     return _currentDay;
   }
+
+  // final List<String> comments = <String>[
+  //   '최신 음악 무제한',
+  //   '뮤직비디오 무제한',
+  //   '음악 라이브러리 공유',
+  //   '뮤직비디오 업로드',
+  //   '뮤직비디오 공유 무제한'
+  // ];
+
+  // final List<IconData> icons = <IconData>[
+  //   Icons.music_note,
+  //   Icons.music_video,
+  //   Icons.library_music,
+  //   Icons.videocam,
+  //   Icons.video_library
+  // ];
+
+  // final List<String> wons = <String>[
+  //   "5,000",
+  //   "7,000",
+  //   "9,000",
+  //   "10,000",
+  //   "15,000",
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -102,51 +133,64 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
               ),
               Expanded(
                 child: Container(
-                  width: double.infinity,
-                  child: Card(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                      side: BorderSide(
-                        color: Colors.grey.withOpacity(0.3),
-                        width: 1,
+                    width: double.infinity,
+                    // height: MediaQuery.of(context).size.height,
+                    child: Card(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                        side: BorderSide(
+                          color: Colors.grey.withOpacity(0.3),
+                          width: 1,
+                        ),
                       ),
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 15,
-                        ),
-                        // Center(
-                        //   child: ListView.separated(
-                        //     itemCount: this._datas.length,
-                        //     itemBuilder: (context, index) {
-                        //       final data = this._datas[index];
-                        //       return ListTile(
-                        //         title: getBusBox("0분 뒤 출발", "10:10 후문 정류장 출발"),
-                        //       );
-                        //     },
-                        //     separatorBuilder:
-                        //         (BuildContext context, int index) {
-                        //       return Divider(
-                        //         thickness: 3,
-                        //       );
-                        //     },
-                        //   ),
-                        // ),
-                        getBusBox("0분 뒤 출발", "10:10 후문 정류장 출발"),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Spacer(),
-                        getAlarmBox(screen_width, screen_height),
-                        SizedBox(
-                          height: 20,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: 15,
+                          ),
+
+                          Expanded(
+                            flex: 100,
+                            child: Scrollbar(
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                padding: EdgeInsets.all(8),
+                                itemCount: busTime_list.length == 0
+                                    ? 1
+                                    : busTime_list.length,
+
+                                // itemCount: 8,
+                                itemBuilder: (context, index) {
+                                  return Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: <Widget>[
+                                      ListTile(
+                                        title: timeblock(335, 60),
+
+                                        // title: comments[index],
+                                      ),
+                                    ],
+                                  );
+                                },
+                                separatorBuilder: (context, index) {
+                                  return Divider();
+                                },
+                              ),
+                            ),
+                          ),
+
+                          // SizedBox(
+                          //   height: 30,
+                          // ),
+                          Spacer(),
+                          getAlarmBox(screen_width, screen_height),
+                          SizedBox(
+                            height: 20,
+                          )
+                        ],
+                      ),
+                    )),
               ),
             ],
           ),
@@ -176,27 +220,20 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     );
   }
 
-  Widget getBusBox(String str1, String str2) {
-    double w = 335;
-    double h = 60;
-
-    return Container(
-        child: SingleChildScrollView(
-      child: Column(
-        children: [
-          for (int i = 0; i < 5; i++) timeblock(w, h), //여기까지가 한 블럭
-          SizedBox(
-            height: 15,
-          ),
-        ],
-      ),
-    ));
-  }
+  // final List<Container> comments = <Container>[];
+  // List<Container> contents() {
+  //   if (comments.isEmpty) {
+  //     comments.add(timeblock(355, 60));
+  //     print("하하");
+  //   }
+  //   // timeblock(335, 60);
+  //   // final List<Container> comments = <Container>[];
+  //   comments.add(timeblock(355, 60));
+  //   print(comments);
+  //   return comments;
+  // }
 
   Container timeblock(double w, double h) {
-    SizedBox(
-      height: 20,
-    );
     return Container(
       //한 블럭
       width: w,
@@ -349,13 +386,17 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
       // }
 
       // if (duration.inSeconds >= 0) time_list.add(duration.inSeconds);
+
       if (duration.inSeconds >= 0) {
         time_list.add(duration.inSeconds);
+        // busTime_list.add(duration.inSeconds);
       } else {
         time_list.add(1000000);
       }
       not_time_list.add(duration.inSeconds);
     }
+    // print("버스 시간 2");
+    // print(busTime_list);
     // print(time_list);
 
     // print("데이터 정제 전 :");
@@ -376,13 +417,14 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     // }
     // print("check: " + check);
     time_list.sort();
+    // busTime_list.sort();
     time_list.removeWhere((e) => e == 1000000);
 
     time_list.add(1000000);
-    print(time_list);
+    // print(time_list);
     min = time_list[0];
     // not_min = not_time_list[0];
-    print(min); //가장 얼마 안남은 시간
+    // print(min); //가장 얼마 안남은 시간
 
     initM = min;
 
@@ -390,8 +432,8 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     h1 = h.toInt();
     m = (initM % 3600) / 60;
     m1 = m.toInt();
-    print(h1);
-    print(m1);
+    // print(h1);
+    // print(m1);
 
     if (initM == 1000000) {
       // time_list.removeWhere((e) => e == 1000000);
@@ -435,15 +477,21 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
 
       if (duration.inSeconds >= 0) {
         time_list.add(duration.inSeconds);
+        busTime_list.add(duration.inSeconds);
       } else {
-        time_list.add(-duration.inSeconds);
+        time_list.add(1000000);
       }
 
       not_time_list.add(duration.inSeconds);
     }
 
+    print("버스 시간 2");
+    print(busTime_list);
+
+    busTime_list.sort();
     time_list.sort();
-    print(time_list);
+
+    // print(time_list);
 
     String check = '0';
     String hour, minute;
@@ -462,27 +510,35 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     min = time_list[0];
     not_min = not_time_list[0];
 
+    busTime_list.add(1000000); //버스가 없을 경우 null값이 되니까 0을 추가해봄.
+
     initM = min;
 
     h = initM / 3600;
     h1 = h.toInt();
     m = (initM % 3600) / 60;
     m1 = m.toInt();
-    min = m1;
 
-    print(formattedTime);
+    // print("현재 시간: ");
+    // print(formattedTime);
     final splitted1 = formattedTime.split(':');
     hour = splitted1[0];
     minute = splitted1[1];
     hour1 = int.parse(hour);
     minute1 = int.parse(minute); //현재 시간
 
-    minute1 = minute1 + m1;
-    hour1 = hour1 + h1;
-    // print(hour1);
-    // print(minute1);
+    minute2 = minute1 + m1;
+    hour2 = hour1 + h1;
+    if (minute2 >= 60) {
+      minute2 = 0;
+      hour2 = hour2 + 1;
 
-    if (check == '1' && time_list.length != 1) return "$hour1:$minute1";
+      String minute3 = minute2.toString();
+      minute3 = "00";
+      if (check == '1' && time_list.length != 1) return "$hour2:" + minute3;
+    }
+
+    if (check == '1' && time_list.length != 1) return "$hour2:$minute2";
 
     return "버스 없음";
   }
