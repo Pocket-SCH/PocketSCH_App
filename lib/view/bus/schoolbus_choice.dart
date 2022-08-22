@@ -24,6 +24,10 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
 
     SchoolBusGetRequest(changed_day);
     contents();
+    setState(() {
+      leftmessage.clear();
+      rightmessage.clear();
+    });
     // SchoolBusChangeTime(); //왼쪽 블럭 메시지 채워줌.
     // contents();
     // SchoolBusChangeTime();
@@ -102,11 +106,11 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
                     text: '학내순환 버스',
                     style: TextStyle(color: Colors.black, fontSize: 18)),
               ])),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.refresh_outlined),
-                iconSize: 30,
-              ),
+              // IconButton(
+              //   onPressed: () {},
+              //   icon: Icon(Icons.refresh_outlined),
+              //   iconSize: 30,
+              // ),
               SizedBox(
                 height: 15,
               ),
@@ -130,12 +134,12 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
                           ),
 
                           Expanded(
-                            flex: 100,
+                            flex: 10,
                             child: Scrollbar(
                               child: ListView.separated(
                                 shrinkWrap: true,
                                 padding: EdgeInsets.all(8),
-                                itemCount: leftmessage.length ==
+                                itemCount: rightmessage.length ==
                                         0 ////////////////////////////////////////////////////////////////////
                                     ? 10
                                     : left_count,
@@ -264,7 +268,15 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
                                 style: TextStyle(fontSize: 15),
                               ),
                             );
+                          } else if (today == "토") {
+                            return Text(
+                              "버스가 없습니다",
+                              style: TextStyle(height: 1),
+                            );
                           }
+                          // else if (leftmessage.isEmpty) { /////////////////////////////////////
+                          //   return Text("정보 없음");
+                          // }
 
                           //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
                           else {
@@ -279,7 +291,7 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
                             // for (int i = 0; i < busTime_list.length; i++)
                             if (leftmessage[0] == "x")
                               return Text(
-                                "더이상 버스 정보가 없습니다",
+                                "정보 없음",
                                 style: TextStyle(fontSize: 15),
                               );
 
@@ -321,15 +333,26 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
                       // }
                       else if (today == "토") {
                         return Text(
-                          "버스가 없습니다",
-                          style: TextStyle(height: 2.2),
+                          "토요일에는 버스 운행을 하지 않습니다",
+                          style: TextStyle(
+                            height: 1,
+                            fontSize: 11,
+                          ),
                         );
                       }
                       //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
                       else {
                         // ChangeTime(); //몇 분 남았는지 가져오게 하는 함수
+                        SchoolBusChangeTime1();
 
-                        return Text(SchoolBusChangeTime1() + " 후문 정류장 출발",
+                        if (rightmessage[0] == 'x')
+                          return Text("더이상 버스 정보가 없습니다",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400));
+
+                        return Text(rightmessage[0],
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,
@@ -387,23 +410,20 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
 
     left_count = busTime_list.length;
     busTime_list.sort();
-    print("버스 시간");
-    print(busTime_list);
+    // print("버스 시간");
+    // print(busTime_list);
     // print(time_list);
     time_list.removeWhere((e) => e == 1000000);
     busTime_list.removeWhere((e) => e == 1000000);
 
-    time_list.add(1000000);
+    // time_list.add(1000000);
     busTime_list.add(1000000);
 
-    print(time_list);
+    // print(time_list);
     leftmessage.add("x");
     for (int i = 0; i < time_list.length; i++) {
-      // print(time_list);
       min = time_list[0];
       min = busTime_list[0];
-      // not_min = not_time_list[0];
-      // print(min); //가장 얼마 안남은 시간
 
       initM = min;
 
@@ -411,10 +431,8 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
       h1 = h.toInt();
       m = (initM % 3600) / 60;
       m1 = m.toInt();
-      // print(h1);
-      // print(m1);
 
-      print(busTime_list.length);
+      // print(busTime_list.length);
       if (initM == 1000000) {
         // time_list.removeWhere((e) => e == 1000000);
         leftmessage.add("버스 운행이\n종료되었습니다");
@@ -443,7 +461,7 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
 
     }
 
-    print(leftmessage);
+    // print(leftmessage);
     leftmessage.removeAt(0);
 
     return leftmessage;
@@ -455,7 +473,7 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
   final List<String> rightmessage = <String>[];
 
 //오른쪽 블럭
-  String SchoolBusChangeTime1() {
+  List<String> SchoolBusChangeTime1() {
     var time_list = [];
     var not_time_list = [];
     int min, not_min;
@@ -483,69 +501,74 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
         busTime_list1.add(duration.inSeconds);
       } else {
         time_list.add(1000000);
+        busTime_list1.add(1000000);
       }
 
       not_time_list.add(duration.inSeconds);
     }
 
-    // print("버스 시간 2");
-    print(busTime_list);
-
     busTime_list1.sort();
     time_list.sort();
 
-    // print(time_list);
-
-    String check = '0';
     String hour, minute;
     int hour1, minute1, hour2, minute2;
+    time_list.removeWhere((e) => e == 1000000);
+    busTime_list1.removeWhere((e) => e == 1000000);
+    // time_list.add(0);
+
+    // print("버스 시간 2");
+    // print(busTime_list1);
+    busTime_list1.add(1000000); //버스가 없을 경우 null값이 되니까 0을 추가해봄.
+    rightmessage.add("x");
+
     for (int i = 0; i < time_list.length; i++) {
-      if (not_time_list[i] == 1) {
-        //갈 수 있는 시간이 하나라도 있음
-        check = '0';
+      min = time_list[0];
+      min = busTime_list1[0];
+      not_min = not_time_list[0];
+
+      // for()
+
+      initM = min;
+
+      h = initM / 3600;
+      h1 = h.toInt();
+      m = (initM % 3600) / 60;
+      m1 = m.toInt();
+
+      final splitted1 = formattedTime.split(':');
+      hour = splitted1[0];
+      minute = splitted1[1];
+      hour1 = int.parse(hour);
+      minute1 = int.parse(minute); //현재 시간
+
+      minute2 = minute1 + m1;
+      hour2 = hour1 + h1;
+
+      if (time_list.length != 1) {
+        if (minute2 >= 60) {
+          minute2 = minute2 % 60;
+          if (minute2 == 0) {
+            String minute3 = minute2.toString();
+            minute3 = "00";
+            hour2 = hour2 + 1;
+            rightmessage.add("$hour2:" + minute3 + " 후문 정류장 출발");
+            //   //   minute3 = "00";
+          } else {
+            hour2 = hour2 + 1;
+            rightmessage.add("$hour2:$minute2:" + " 후문 정류장 출발");
+          }
+        } else
+          rightmessage.add("$hour2:$minute2" + " 후문 정류장 출발");
       } else {
-        check = '1';
+        rightmessage.add("버스 없음");
         break;
       }
+
+      print(busTime_list1);
+      busTime_list1.removeAt(0);
     }
-    time_list.removeWhere((e) => e == 1000000);
-    time_list.add(0);
-    min = time_list[0];
-    not_min = not_time_list[0];
-
-    // for()
-
-    busTime_list1.add(1000000); //버스가 없을 경우 null값이 되니까 0을 추가해봄.
-
-    initM = min;
-
-    h = initM / 3600;
-    h1 = h.toInt();
-    m = (initM % 3600) / 60;
-    m1 = m.toInt();
-
-    // print("현재 시간: ");
-    // print(formattedTime);
-    final splitted1 = formattedTime.split(':');
-    hour = splitted1[0];
-    minute = splitted1[1];
-    hour1 = int.parse(hour);
-    minute1 = int.parse(minute); //현재 시간
-
-    minute2 = minute1 + m1;
-    hour2 = hour1 + h1;
-    if (minute2 >= 60) {
-      minute2 = 0;
-      hour2 = hour2 + 1;
-
-      String minute3 = minute2.toString();
-      minute3 = "00";
-      if (check == '1' && time_list.length != 1) return "$hour2:" + minute3;
-    }
-
-    if (check == '1' && time_list.length != 1) return "$hour2:$minute2";
-
-    return "버스 없음";
+    rightmessage.removeAt(0);
+    return rightmessage;
   }
 
 //학내 순환 버스 시간 가져오기 GET
