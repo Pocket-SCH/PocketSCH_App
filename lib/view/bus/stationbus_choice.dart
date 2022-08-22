@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:pocket_sch/view/bus/bus_Widget.dart';
 import 'package:pocket_sch/view/bus/get_bus.dart';
 import 'package:http/http.dart' as http;
 import 'package:pocket_sch/view/bus/bus_method.dart';
@@ -33,6 +34,7 @@ class _StationBusChoiceState extends State<StationBusChoice> {
 
   final List<Container> comments = <Container>[];
 
+  String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/1/";
   void initState() {
     super.initState();
     today = getCurrentDay();
@@ -74,7 +76,7 @@ class _StationBusChoiceState extends State<StationBusChoice> {
   }
 
   List<Container> contents(int num) {
-    for (int i = 0; i < num; i++) comments.add(timeblock(355, 60));
+    for (int i = 0; i < num; i++) comments.add(timeblock(355, 60, i));
 
     return comments;
   }
@@ -146,7 +148,10 @@ class _StationBusChoiceState extends State<StationBusChoice> {
                       }
                       //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
                       else {
+                        StationBusChangeTime();
+                        StationBusChangeTime1();
                         index = getIndex();
+
                         return Show_List(screen_width, screen_height,
                             index); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
 
@@ -189,8 +194,6 @@ class _StationBusChoiceState extends State<StationBusChoice> {
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
                           ListTile(
-                            // title: timeblock(335, 60),
-
                             title: comments[index],
                           ),
                         ],
@@ -212,80 +215,9 @@ class _StationBusChoiceState extends State<StationBusChoice> {
         ));
   }
 
-  Widget getAlarmBox(double screen_width, double screen_height) {
-    return SizedBox(
-      width: screen_width * 0.78,
-      height: screen_height * 0.07,
-      child: ElevatedButton.icon(
-        onPressed: () {
-          Get.toNamed('alarmAdd');
-        },
-        icon: Icon(Icons.alarm, size: 20),
-        label: Text("알람 추가",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w500)),
-        style: ElevatedButton.styleFrom(
-          primary: Color(0xffa4c9c9),
-        ),
-      ),
-    );
-  }
-
-  Widget getBusBox(String str1, String str2) {
-    double w = 335;
-    double h = 60;
-
-    return Container(
-      width: w,
-      height: h,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: [
-            BoxShadow(
-                color: const Color(0x29000000),
-                offset: Offset(0, 0),
-                blurRadius: 6,
-                spreadRadius: 0)
-          ],
-          color: Color(0xff87aaaa)),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 10,
-          ),
-          Container(
-            width: w * 0.4,
-            height: h,
-            child: Container(
-                margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(5),
-                        topLeft: Radius.circular(5))),
-                child: Center(child: Text(str1))),
-          ),
-          Container(
-            width: w * 0.5,
-            height: h,
-            child: Center(
-                child: Text(str2,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400))),
-          ),
-        ],
-      ),
-    );
-  }
-
 //신창역 셔틀 버스 시간 가져오기 GET
   Future StationBusGetRequest(String day) async {
-    String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/1/$day";
-    final Uri url = Uri.parse(api);
+    final Uri url = Uri.parse(api + "$day");
 
     final response = await http.get(url);
     _text = utf8.decode(response.bodyBytes);
@@ -301,8 +233,7 @@ class _StationBusChoiceState extends State<StationBusChoice> {
 
 //신창역 셔틀 버스 시간 가져오기 GET
   Future StationBusGetRequest1(String day) async {
-    String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/1/$day";
-    final Uri url = Uri.parse(api);
+    final Uri url = Uri.parse(api + "$day");
 
     final response = await http.get(url);
     _text1 = utf8.decode(response.bodyBytes);
@@ -317,7 +248,7 @@ class _StationBusChoiceState extends State<StationBusChoice> {
     print(parsedResponse);
   }
 
-  Container timeblock(double w, double h) {
+  Container timeblock(double w, double h, int index) {
     return Container(
       //한 블럭
       width: w,
@@ -349,100 +280,21 @@ class _StationBusChoiceState extends State<StationBusChoice> {
                         bottomLeft: Radius.circular(5),
                         topLeft: Radius.circular(5))),
                 child: Center(
-                    child: FutureBuilder(
-                        future: _fetch3(),
-                        builder:
-                            (BuildContext content, AsyncSnapshot snapshot) {
-                          //해당 부분은 data를 아직 받아오지 못했을 떄 실행
-                          if (snapshot.hasData == false) {
-                            return Text(
-                              "데이터를 받아오는 중...",
-                              style: TextStyle(fontSize: 12),
-                            );
-                          }
-                          //error가 발생하게 될 경우 반환하게 되는 부분
-                          else if (snapshot.hasError) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Error: ${snapshot.error}',
-                                style: TextStyle(fontSize: 15),
-                              ),
-                            );
-                          } else if (today == "토" || today == "일") {
-                            return Text(
-                              "버스가 없습니다",
-                              style: TextStyle(height: 1),
-                            );
-                          }
-                          //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
-                          else {
-                            StationBusChangeTime();
-
-                            if (leftmessage[0] == "x")
-                              return Text(
-                                "정보 없음",
-                                style: TextStyle(fontSize: 15),
-                              );
-
-                            return Text(
-                              leftmessage[0],
-                              style: TextStyle(fontSize: 15),
-                            );
-                          }
-                        }))),
+                  child: Text(
+                    leftmessage[index],
+                    style: TextStyle(fontSize: 15),
+                  ),
+                )),
           ),
           Container(
-            width: w * 0.5,
-            height: h,
-            child: Center(
-                child: FutureBuilder(
-                    future: _fetch3(),
-                    builder: (BuildContext content, AsyncSnapshot snapshot) {
-                      //해당 부분은 data를 아직 받아오지 못했을 떄 실행
-                      if (snapshot.hasData == false) {
-                        return Text(
-                          "데이터를 받아오는 중...",
-                          style: TextStyle(fontSize: 12),
-                        );
-                      }
-                      //error가 발생하게 될 경우 반환하게 되는 부분
-                      else if (snapshot.hasError) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Error: ${snapshot.error}',
-                            style: TextStyle(fontSize: 15),
-                          ),
-                        );
-                      } else if (today == "토" || today == "일") {
-                        return Text(
-                          "주말에는 버스 운행을\n하지 않습니다",
-                          style: TextStyle(
-                            height: 1,
-                            fontSize: 15,
-                          ),
-                        );
-                      }
-                      //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
-                      else {
-                        StationBusChangeTime1();
-                        // contents();
-                        if (rightmessage[0] == 'x')
-                          return Text("더이상 버스 정보가 없습니다",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400));
-
-                        return Text(rightmessage[0],
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400));
-                      }
-                    })),
-          ),
+              width: w * 0.5,
+              height: h,
+              child: Center(
+                child: Text(
+                  rightmessage[index],
+                  style: TextStyle(fontSize: 15),
+                ),
+              )),
         ],
       ),
     );
@@ -615,11 +467,6 @@ class _StationBusChoiceState extends State<StationBusChoice> {
     rightmessage.removeAt(0);
     return rightmessage;
   }
-}
-
-Future<String> _fetch3() async {
-  await Future.delayed(Duration(seconds: 1));
-  return 'Call Data';
 }
 
 Future<String> _fetch4() async {

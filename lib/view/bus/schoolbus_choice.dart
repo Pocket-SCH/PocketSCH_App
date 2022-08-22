@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:pocket_sch/view/bus/bus_Widget.dart';
 import 'package:pocket_sch/view/bus/get_bus.dart';
 import 'package:http/http.dart' as http;
 import 'package:pocket_sch/view/bus/bus_method.dart';
@@ -34,6 +34,7 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     });
   }
 
+  String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/0/";
   var busTime_list = [];
   var busTime_list1 = [];
 
@@ -109,7 +110,10 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
                         }
                         //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
                         else {
+                          SchoolBusChangeTime();
+                          SchoolBusChangeTime1();
                           index = getIndex();
+
                           return Show_List(screen_width, screen_height,
                               index); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
 
@@ -153,8 +157,6 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
                           ListTile(
-                            // title: timeblock(335, 60),
-
                             title: comments[index],
                           ),
                         ],
@@ -176,36 +178,15 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
         ));
   }
 
-  Widget getAlarmBox(double screen_width, double screen_height) {
-    return SizedBox(
-      width: screen_width * 0.78,
-      height: screen_height * 0.07,
-      child: ElevatedButton.icon(
-        onPressed: () {
-          Get.toNamed('alarmAdd');
-        },
-        icon: Icon(Icons.alarm, size: 20),
-        label: Text("알람 추가",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w500)),
-        style: ElevatedButton.styleFrom(
-          primary: Color(0xffa4c9c9),
-        ),
-      ),
-    );
-  }
-
   final List<Container> comments = <Container>[];
 
   List<Container> contents(int num) {
-    for (int i = 0; i < num; i++) comments.add(timeblock(355, 60));
+    for (int i = 0; i < num; i++) comments.add(timeblock(355, 60, i));
 
     return comments;
   }
 
-  Container timeblock(double w, double h) {
+  Container timeblock(double w, double h, int index) {
     return Container(
       //한 블럭
       width: w,
@@ -237,102 +218,22 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
                         bottomLeft: Radius.circular(5),
                         topLeft: Radius.circular(5))),
                 child: Center(
-                    child: FutureBuilder(
-                        future: _fetch3(),
-                        builder:
-                            (BuildContext content, AsyncSnapshot snapshot) {
-                          //해당 부분은 data를 아직 받아오지 못했을 떄 실행
-                          if (snapshot.hasData == false) {
-                            return Text(
-                              "데이터를 받아오는 중...",
-                              style: TextStyle(fontSize: 12),
-                            );
-                            // CircularProgressIndicator();
-                          }
-                          //error가 발생하게 될 경우 반환하게 되는 부분
-                          else if (snapshot.hasError) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Error: ${snapshot.error}',
-                                style: TextStyle(fontSize: 15),
-                              ),
-                            );
-                          } else if (today == "토") {
-                            return Text(
-                              "버스가 없습니다",
-                              style: TextStyle(height: 1),
-                            );
-                          }
-
-                          //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
-                          else {
-                            SchoolBusChangeTime();
-
-                            if (leftmessage[0] == "x")
-                              return Text(
-                                "정보 없음",
-                                style: TextStyle(fontSize: 15),
-                              );
-
-                            return Text(
-                              leftmessage[0],
-                              style: TextStyle(fontSize: 15),
-                            );
-                          }
-                        }))),
+                  child: Text(
+                    leftmessage[index],
+                    style: TextStyle(fontSize: 15),
+                  ),
+                )),
           ),
           Container(
-            width: w * 0.5,
-            height: h,
-            child: Center(
-                child: FutureBuilder(
-                    future: _fetch3(),
-                    builder: (BuildContext content, AsyncSnapshot snapshot) {
-                      //해당 부분은 data를 아직 받아오지 못했을 떄 실행
-                      if (snapshot.hasData == false) {
-                        return Text(
-                          "데이터를 받아오는 중...",
-                          style: TextStyle(fontSize: 12),
-                        );
-                      }
-                      //error가 발생하게 될 경우 반환하게 되는 부분
-                      else if (snapshot.hasError) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Error: ${snapshot.error}',
-                            style: TextStyle(fontSize: 15),
-                          ),
-                        );
-                      } else if (today == "토") {
-                        return Text(
-                          "토요일에는 버스 운행을\n하지 않습니다",
-                          style: TextStyle(
-                            height: 1,
-                            fontSize: 15,
-                          ),
-                        );
-                      }
-                      //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
-                      else {
-                        SchoolBusChangeTime1();
-                        // contents();
-                        if (rightmessage[0] == 'x')
-                          return Text("더이상 버스 정보가 없습니다",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400));
-
-                        return Text(rightmessage[0],
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400));
-                      }
-                    })),
-          ),
+              width: w * 0.5,
+              height: h,
+              child: Center(
+                child: Text(rightmessage[index],
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400)),
+              )),
         ],
       ),
     );
@@ -373,7 +274,7 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
   List<String> SchoolBusChangeTime() {
     var time_list = [];
     var not_time_list = [];
-    int min, not_min;
+    int min;
     var initM;
 
     double m, h;
@@ -409,8 +310,6 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     time_list.add(1000000);
     busTime_list.add(1000000);
 
-    leftmessage.add("x");
-
     index = busTime_list.length;
     for (int i = 0; i < time_list.length; i++) {
       min = time_list[0];
@@ -440,8 +339,6 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
 
       busTime_list.removeAt(0);
     }
-
-    leftmessage.removeAt(0);
 
     return leftmessage;
   }
@@ -491,7 +388,6 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     busTime_list1.removeWhere((e) => e == 1000000);
     time_list.add(1000000);
     busTime_list1.add(1000000);
-    rightmessage.add("x");
 
     for (int i = 0; i < time_list.length; i++) {
       min = time_list[0];
@@ -536,14 +432,12 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
 
       busTime_list1.removeAt(0);
     }
-    rightmessage.removeAt(0);
     return rightmessage;
   }
 
 //학내 순환 버스 시간 가져오기 GET
   Future SchoolBusGetRequest(String day) async {
-    String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/0/$day";
-    final Uri url = Uri.parse(api);
+    final Uri url = Uri.parse(api + "$day");
 
     final response = await http.get(url);
     _text = utf8.decode(response.bodyBytes);
@@ -559,8 +453,7 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
 
 //학내 순환 버스 시간 가져오기 GET
   Future SchoolBusGetRequest1(String day) async {
-    String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/0/$day";
-    final Uri url = Uri.parse(api);
+    final Uri url = Uri.parse(api + "$day");
 
     final response = await http.get(url);
     _text1 = utf8.decode(response.bodyBytes);
@@ -573,11 +466,6 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
       _datas1.addAll(parsedResponse);
     });
   }
-}
-
-Future<String> _fetch3() async {
-  await Future.delayed(Duration(seconds: 1));
-  return 'Call Data';
 }
 
 Future<String> _fetch4() async {
