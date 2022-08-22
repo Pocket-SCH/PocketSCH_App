@@ -98,18 +98,18 @@ class _BusHomeState extends State<BusHome> {
       print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
     });
 
-    String check = '0';
+    // String check = '0';
 
-    for (int i = 0; i < time_list.length; i++) {
-      if (time_list[i] == 1) {
-        //갈 수 있는 시간이 하나라도 있음
-        check = '0';
-      } else {
-        check = '1';
-        break;
-      }
-    }
-    print("check: " + check);
+    // for (int i = 0; i < time_list.length; i++) {
+    //   if (time_list[i] == 1) {
+    //     //갈 수 있는 시간이 하나라도 있음
+    //     check = '0';
+    //   } else {
+    //     check = '1';
+    //     break;
+    //   }
+    // }
+    // print("check: " + check);
     time_list.removeWhere((e) => e == null);
     time_list.add(1000000);
     print(time_list);
@@ -126,7 +126,8 @@ class _BusHomeState extends State<BusHome> {
     // print(h1);
     // print(m1);
 
-    if (check == '1' && time_list.length != 1) {
+    // if (check == '1' && time_list.length != 1) {
+    if (time_list.length != 1) {
       if (h1 == 0) return "후문정류장에서\n" + "$m1분 뒤 출발";
       return "후문정류장에서\n" + "$h1시간 $m1분 뒤 출발";
     }
@@ -172,19 +173,19 @@ class _BusHomeState extends State<BusHome> {
 
     // print("데이터 정제 전 :");
     // print(time_list_school); //모든 시간 넣은 리스트(데이터 정제 이전)
-    // print(not_time_list_school);
+    print(not_time_list_school);
 
-    String check = '0';
+    // String check = '0';
 
-    for (int i = 0; i < time_list_school.length; i++) {
-      if (not_time_list_school[i] == 1) {
-        //갈 수 있는 시간이 하나라도 있음
-        check = '0';
-      } else {
-        check = '1';
-        break;
-      }
-    }
+    // for (int i = 0; i < time_list_school.length; i++) {
+    //   if (not_time_list_school[i] == 1) {
+    //     //갈 수 있는 시간이 하나라도 있음
+    //     check = '0';
+    //   } else {
+    //     check = '1';
+    //     break;
+    //   }
+    // }
     // print("check: " + check);
     time_list_school.removeWhere((e) => e == null);
     time_list_school.add(1000000);
@@ -204,7 +205,7 @@ class _BusHomeState extends State<BusHome> {
       return "버스 운행이\n종료되었습니다";
     }
 
-    if (check == '1' && time_list_school.length != 1) {
+    if (time_list_school.length != 1) {
       if (h1 == 0) return "후문정류장에서\n" + "$m1분 뒤 출발";
       return "후문정류장에서\n" + "$h1시간 $m1분 뒤 출발";
     }
