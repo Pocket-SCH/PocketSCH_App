@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:pocket_sch/view/bus/get_bus.dart';
 import 'package:http/http.dart' as http;
@@ -143,27 +142,23 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
               ),
               Expanded(
                 flex: 10,
-                child: Scrollbar(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.all(8),
-                    itemCount: index,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: <Widget>[
-                          ListTile(
-                            // title: timeblock(335, 60),
-
-                            title: comments[index],
-                          ),
-                        ],
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return Divider();
-                    },
-                  ),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.all(8),
+                  itemCount: index < 5 ? index : 5,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        ListTile(
+                          title: comments[index],
+                        ),
+                      ],
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return Divider();
+                  },
                 ),
               ),
               Spacer(),
@@ -200,7 +195,8 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
   final List<Container> comments = <Container>[];
 
   List<Container> contents(int num) {
-    for (int i = 0; i < num; i++) comments.add(timeblock(355, 60));
+    int len = num < 5 ? num : 5;
+    for (int i = 0; i < len; i++) comments.add(timeblock(355, 60));
 
     return comments;
   }

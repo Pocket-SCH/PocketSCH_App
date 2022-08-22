@@ -74,7 +74,8 @@ class _StationBusChoiceState extends State<StationBusChoice> {
   }
 
   List<Container> contents(int num) {
-    for (int i = 0; i < num; i++) comments.add(timeblock(355, 60));
+    int len = num < 5 ? num : 5;
+    for (int i = 0; i < len; i++) comments.add(timeblock(355, 60));
 
     return comments;
   }
@@ -183,14 +184,12 @@ class _StationBusChoiceState extends State<StationBusChoice> {
                   child: ListView.separated(
                     shrinkWrap: true,
                     padding: EdgeInsets.all(8),
-                    itemCount: index,
+                    itemCount: index < 5 ? index : 5,
                     itemBuilder: (context, index) {
                       return Column(
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
                           ListTile(
-                            // title: timeblock(335, 60),
-
                             title: comments[index],
                           ),
                         ],
