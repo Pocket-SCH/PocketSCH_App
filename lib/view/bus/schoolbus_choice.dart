@@ -108,7 +108,10 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
                         }
                         //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
                         else {
+                          SchoolBusChangeTime();
+                          SchoolBusChangeTime1();
                           index = getIndex();
+
                           return Show_List(screen_width, screen_height,
                               index); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
 
@@ -142,23 +145,25 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
               ),
               Expanded(
                 flex: 10,
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.all(8),
-                  itemCount: index < 5 ? index : 5,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        ListTile(
-                          title: comments[index],
-                        ),
-                      ],
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return Divider();
-                  },
+                child: Scrollbar(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.all(8),
+                    itemCount: index,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          ListTile(
+                            title: comments[index],
+                          ),
+                        ],
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return Divider();
+                    },
+                  ),
                 ),
               ),
               Spacer(),
@@ -195,13 +200,12 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
   final List<Container> comments = <Container>[];
 
   List<Container> contents(int num) {
-    int len = num < 5 ? num : 5;
-    for (int i = 0; i < len; i++) comments.add(timeblock(355, 60));
+    for (int i = 0; i < num; i++) comments.add(timeblock(355, 60, i));
 
     return comments;
   }
 
-  Container timeblock(double w, double h) {
+  Container timeblock(double w, double h, int index) {
     return Container(
       //한 블럭
       width: w,
@@ -233,102 +237,22 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
                         bottomLeft: Radius.circular(5),
                         topLeft: Radius.circular(5))),
                 child: Center(
-                    child: FutureBuilder(
-                        future: _fetch3(),
-                        builder:
-                            (BuildContext content, AsyncSnapshot snapshot) {
-                          //해당 부분은 data를 아직 받아오지 못했을 떄 실행
-                          if (snapshot.hasData == false) {
-                            return Text(
-                              "데이터를 받아오는 중...",
-                              style: TextStyle(fontSize: 12),
-                            );
-                            // CircularProgressIndicator();
-                          }
-                          //error가 발생하게 될 경우 반환하게 되는 부분
-                          else if (snapshot.hasError) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'Error: ${snapshot.error}',
-                                style: TextStyle(fontSize: 15),
-                              ),
-                            );
-                          } else if (today == "토") {
-                            return Text(
-                              "버스가 없습니다",
-                              style: TextStyle(height: 1),
-                            );
-                          }
-
-                          //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
-                          else {
-                            SchoolBusChangeTime();
-
-                            if (leftmessage[0] == "x")
-                              return Text(
-                                "정보 없음",
-                                style: TextStyle(fontSize: 15),
-                              );
-
-                            return Text(
-                              leftmessage[0],
-                              style: TextStyle(fontSize: 15),
-                            );
-                          }
-                        }))),
+                  child: Text(
+                    leftmessage[index],
+                    style: TextStyle(fontSize: 15),
+                  ),
+                )),
           ),
           Container(
-            width: w * 0.5,
-            height: h,
-            child: Center(
-                child: FutureBuilder(
-                    future: _fetch3(),
-                    builder: (BuildContext content, AsyncSnapshot snapshot) {
-                      //해당 부분은 data를 아직 받아오지 못했을 떄 실행
-                      if (snapshot.hasData == false) {
-                        return Text(
-                          "데이터를 받아오는 중...",
-                          style: TextStyle(fontSize: 12),
-                        );
-                      }
-                      //error가 발생하게 될 경우 반환하게 되는 부분
-                      else if (snapshot.hasError) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Error: ${snapshot.error}',
-                            style: TextStyle(fontSize: 15),
-                          ),
-                        );
-                      } else if (today == "토") {
-                        return Text(
-                          "토요일에는 버스 운행을\n하지 않습니다",
-                          style: TextStyle(
-                            height: 1,
-                            fontSize: 15,
-                          ),
-                        );
-                      }
-                      //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
-                      else {
-                        SchoolBusChangeTime1();
-                        // contents();
-                        if (rightmessage[0] == 'x')
-                          return Text("더이상 버스 정보가 없습니다",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400));
-
-                        return Text(rightmessage[0],
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400));
-                      }
-                    })),
-          ),
+              width: w * 0.5,
+              height: h,
+              child: Center(
+                child: Text(rightmessage[index],
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400)),
+              )),
         ],
       ),
     );
@@ -369,7 +293,7 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
   List<String> SchoolBusChangeTime() {
     var time_list = [];
     var not_time_list = [];
-    int min, not_min;
+    int min;
     var initM;
 
     double m, h;
@@ -405,8 +329,6 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     time_list.add(1000000);
     busTime_list.add(1000000);
 
-    leftmessage.add("x");
-
     index = busTime_list.length;
     for (int i = 0; i < time_list.length; i++) {
       min = time_list[0];
@@ -436,8 +358,6 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
 
       busTime_list.removeAt(0);
     }
-
-    leftmessage.removeAt(0);
 
     return leftmessage;
   }
@@ -487,7 +407,6 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     busTime_list1.removeWhere((e) => e == 1000000);
     time_list.add(1000000);
     busTime_list1.add(1000000);
-    rightmessage.add("x");
 
     for (int i = 0; i < time_list.length; i++) {
       min = time_list[0];
@@ -532,7 +451,6 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
 
       busTime_list1.removeAt(0);
     }
-    rightmessage.removeAt(0);
     return rightmessage;
   }
 
