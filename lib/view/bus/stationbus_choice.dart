@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:pocket_sch/view/bus/get_bus.dart';
 import 'package:http/http.dart' as http;
@@ -75,9 +74,7 @@ class _StationBusChoiceState extends State<StationBusChoice> {
   }
 
   List<Container> contents(int num) {
-    for (int i = 0; i < num; i++)
-      comments.add(timeblock(355,
-          60)); //timeblock에서 블럭이 만들어질때 다른 문구가 나와야 함 이떄 leftmessage랑 rightmessage로 보여줌//
+    for (int i = 0; i < num; i++) comments.add(timeblock(355, 60));
 
     return comments;
   }
@@ -134,13 +131,8 @@ class _StationBusChoiceState extends State<StationBusChoice> {
                                   const EdgeInsets.fromLTRB(0, 300, 0, 300),
                               child: CircularProgressIndicator(),
                             ),
-                            // Text(
-                            //   "데이터 가져오는 중~",
-                            //   style: TextStyle(height: 1),
-                            // ),
                           ],
                         );
-                        // CircularProgressIndicator();
                       }
                       //error가 발생하게 될 경우 반환하게 되는 부분
                       else if (snapshot.hasError) {
@@ -171,7 +163,6 @@ class _StationBusChoiceState extends State<StationBusChoice> {
   Container Show_List(double screen_width, double screen_height, int index) {
     return Container(
         width: double.infinity,
-        // height: MediaQuery.of(context).size.height,
         child: Card(
           color: Colors.white,
           shape: RoundedRectangleBorder(
@@ -186,7 +177,6 @@ class _StationBusChoiceState extends State<StationBusChoice> {
               SizedBox(
                 height: 15,
               ),
-
               Expanded(
                 flex: 10,
                 child: Scrollbar(
@@ -194,12 +184,6 @@ class _StationBusChoiceState extends State<StationBusChoice> {
                     shrinkWrap: true,
                     padding: EdgeInsets.all(8),
                     itemCount: index,
-                    // ghtmessage.length ==
-                    //         0 ////////////////////////////////////////////////////////////////////
-                    //     ? index
-                    //     : index,
-
-                    // itemCount: 8,
                     itemBuilder: (context, index) {
                       return Column(
                         mainAxisSize: MainAxisSize.max,
@@ -218,10 +202,6 @@ class _StationBusChoiceState extends State<StationBusChoice> {
                   ),
                 ),
               ),
-
-              // SizedBox(
-              //   height: 30,
-              // ),
               Spacer(),
               getAlarmBox(screen_width, screen_height),
               SizedBox(
@@ -379,7 +359,6 @@ class _StationBusChoiceState extends State<StationBusChoice> {
                               "데이터를 받아오는 중...",
                               style: TextStyle(fontSize: 12),
                             );
-                            // CircularProgressIndicator();
                           }
                           //error가 발생하게 될 경우 반환하게 되는 부분
                           else if (snapshot.hasError) {
@@ -396,21 +375,10 @@ class _StationBusChoiceState extends State<StationBusChoice> {
                               style: TextStyle(height: 1),
                             );
                           }
-                          // else if (leftmessage.isEmpty) { /////////////////////////////////////
-                          //   return Text("정보 없음");
-                          // }
-
                           //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
                           else {
-                            StationBusChangeTime(); //왼쪽 블럭 메시지 채워줌.
-                            // contents();
-                            ///////////////////////////////////////////////////////////////////////////////////
-                            //여기서 왼쪽 메시지에 넣어놓은 문장이 만들어지고 하나씩 사라지면서 다음 문장이 생성되도록 함.
-                            // resleftmessage[i]
-                            // ChangeTime(); //몇 분 남았는지 가져오게 하는 함수
-                            // leftmessage
-                            //     .removeAt(0); //앞에 있는 걸  작은 값을 없애고 시작하는 것!
-                            // for (int i = 0; i < busTime_list.length; i++)
+                            StationBusChangeTime();
+
                             if (leftmessage[0] == "x")
                               return Text(
                                 "정보 없음",
@@ -420,8 +388,7 @@ class _StationBusChoiceState extends State<StationBusChoice> {
                             return Text(
                               leftmessage[0],
                               style: TextStyle(fontSize: 15),
-                            ); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
-
+                            );
                           }
                         }))),
           ),
@@ -438,7 +405,6 @@ class _StationBusChoiceState extends State<StationBusChoice> {
                           "데이터를 받아오는 중...",
                           style: TextStyle(fontSize: 12),
                         );
-                        // CircularProgressIndicator();
                       }
                       //error가 발생하게 될 경우 반환하게 되는 부분
                       else if (snapshot.hasError) {
@@ -449,11 +415,7 @@ class _StationBusChoiceState extends State<StationBusChoice> {
                             style: TextStyle(fontSize: 15),
                           ),
                         );
-                      }
-                      // else if (SchoolBusChangeTime() == "버스 없음") {
-                      //   return Text(SchoolBusChangeTime());
-                      // }
-                      else if (today == "토" || today == "일") {
+                      } else if (today == "토" || today == "일") {
                         return Text(
                           "주말에는 버스 운행을\n하지 않습니다",
                           style: TextStyle(
@@ -464,7 +426,6 @@ class _StationBusChoiceState extends State<StationBusChoice> {
                       }
                       //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
                       else {
-                        // ChangeTime(); //몇 분 남았는지 가져오게 하는 함수
                         StationBusChangeTime1();
                         // contents();
                         if (rightmessage[0] == 'x')
@@ -478,9 +439,7 @@ class _StationBusChoiceState extends State<StationBusChoice> {
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,
-                                fontWeight: FontWeight
-                                    .w400)); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
-
+                                fontWeight: FontWeight.w400));
                       }
                     })),
           ),
@@ -609,7 +568,7 @@ class _StationBusChoiceState extends State<StationBusChoice> {
     busTime_list1.removeWhere((e) => e == 1000000);
     time_list.add(1000000);
 
-    busTime_list1.add(1000000); //버스가 없을 경우 null값이 되니까 0을 추가해봄.
+    busTime_list1.add(1000000);
     rightmessage.add("x");
 
     for (int i = 0; i < time_list.length; i++) {
@@ -627,7 +586,7 @@ class _StationBusChoiceState extends State<StationBusChoice> {
       hour = splitted1[0];
       minute = splitted1[1];
       hour1 = int.parse(hour);
-      minute1 = int.parse(minute); //현재 시간
+      minute1 = int.parse(minute);
 
       minute2 = minute1 + m1;
       hour2 = hour1 + h1;
@@ -640,7 +599,6 @@ class _StationBusChoiceState extends State<StationBusChoice> {
             minute3 = "00";
             hour2 = hour2 + 1;
             rightmessage.add("$hour2:" + minute3 + " 후문 정류장 출발");
-            //   //   minute3 = "00";
           } else {
             hour2 = hour2 + 1;
             rightmessage.add("$hour2:$minute2" + " 후문 정류장 출발");
