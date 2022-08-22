@@ -1,21 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
-import 'dart:math';
 import 'dart:typed_data';
-import 'dart:ui';
 
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:date_format/date_format.dart';
+import 'package:pocket_sch/view/bus/bus_method.dart';
 import 'package:pocket_sch/view/bus/get_bus.dart';
 import 'package:timer_builder/timer_builder.dart';
 import 'package:http/http.dart' as http;
@@ -46,8 +42,6 @@ class _BusHomeState extends State<BusHome> {
 
   void initState() {
     super.initState();
-    // print(_datas);
-    // print(_datas2);
     today = getCurrentDay();
 
     String changed_day = changeDay();
@@ -56,13 +50,6 @@ class _BusHomeState extends State<BusHome> {
     StationBusGetRequest(changed_day);
 
     ImageGetRequest();
-  }
-
-  String getCurrentDay() {
-    DateTime now = DateTime.now();
-    initializeDateFormatting('ko_KR');
-    final _currentDay = DateFormat.E('ko_KR').format(now).toString();
-    return _currentDay;
   }
 
 //새로고침 버스 시간
@@ -77,45 +64,25 @@ class _BusHomeState extends State<BusHome> {
       for (int i = 0; i < this._datas.length; i++) {
         String time = this._datas[i].busTime;
 
-        // String time_list=this._datas[0]
         final splitted = time.split('T');
-        // print("학내순환 시간 : " + splitted[1]); //학내순환이니까 10분 간격으로 나옴
         DateTime formattedTime2 = DateFormat("hh:mm").parse(splitted[1]);
 
         DateTime now = DateTime.now();
         String formattedTime = DateFormat('kk:mm').format(now);
-        // print("현재시간 : " + formattedTime);
         DateTime formattedTime1 = DateFormat("hh:mm").parse(formattedTime);
-        // print("formateedTime: " + formattedTime);
 
         Duration duration = formattedTime2.difference(formattedTime1);
-        print(duration.inSeconds); //계산해서 나온 초
 
         if (duration.inSeconds >= 0) {
           time_list.add(duration.inSeconds);
         }
       }
-      print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
     });
 
-    String check = '0';
-
-    for (int i = 0; i < time_list.length; i++) {
-      if (time_list[i] == 1) {
-        //갈 수 있는 시간이 하나라도 있음
-        check = '0';
-      } else {
-        check = '1';
-        break;
-      }
-    }
-    print("check: " + check);
     time_list.removeWhere((e) => e == null);
     time_list.add(1000000);
-    print(time_list);
     min = time_list[0];
     not_min = time_list[0];
-    // print(min); //가장 얼마 안남은 시간
 
     initM = min;
 
@@ -123,10 +90,8 @@ class _BusHomeState extends State<BusHome> {
     h1 = h.toInt();
     m = (initM % 3600) / 60;
     m1 = m.toInt();
-    // print(h1);
-    // print(m1);
 
-    if (check == '1' && time_list.length != 1) {
+    if (time_list.length != 1) {
       if (h1 == 0) return "후문정류장에서\n" + "$m1분 뒤 출발";
       return "후문정류장에서\n" + "$h1시간 $m1분 뒤 출발";
     }
@@ -138,7 +103,7 @@ class _BusHomeState extends State<BusHome> {
   String SchoolBusChangeTime() {
     var time_list_school = [];
     var not_time_list_school = [];
-    int min, not_min;
+    int min;
     var initM;
 
     double m, h;
@@ -147,19 +112,14 @@ class _BusHomeState extends State<BusHome> {
     for (int i = 0; i < this._datas.length; i++) {
       String time = this._datas[i].busTime;
 
-      // String time_list=this._datas[0]
       final splitted = time.split('T');
-      // print("학내순환 시간 : " + splitted[1]); //학내순환이니까 10분 간격으로 나옴
       DateTime formattedTime2 = DateFormat("hh:mm").parse(splitted[1]);
 
       DateTime now = DateTime.now();
       String formattedTime = DateFormat('kk:mm').format(now);
-      // print("현재시간 : " + formattedTime);
       DateTime formattedTime1 = DateFormat("hh:mm").parse(formattedTime);
-      // print("formateedTime: " + formattedTime);
 
       Duration duration = formattedTime2.difference(formattedTime1);
-      // print(duration.inSeconds); //계산해서 나온 초
 
       if (duration.inSeconds >= 0) {
         time_list_school.add(duration.inSeconds);
@@ -170,28 +130,9 @@ class _BusHomeState extends State<BusHome> {
       not_time_list_school.add(duration.inSeconds);
     }
 
-    // print("데이터 정제 전 :");
-    // print(time_list_school); //모든 시간 넣은 리스트(데이터 정제 이전)
-    // print(not_time_list_school);
-
-    String check = '0';
-
-    for (int i = 0; i < time_list_school.length; i++) {
-      if (not_time_list_school[i] == 1) {
-        //갈 수 있는 시간이 하나라도 있음
-        check = '0';
-      } else {
-        check = '1';
-        break;
-      }
-    }
-    // print("check: " + check);
     time_list_school.removeWhere((e) => e == null);
     time_list_school.add(1000000);
-    // print(time_list);
     min = time_list_school[0];
-    not_min = not_time_list_school[0];
-    // print(min); //가장 얼마 안남은 시간
 
     initM = min;
 
@@ -204,7 +145,7 @@ class _BusHomeState extends State<BusHome> {
       return "버스 운행이\n종료되었습니다";
     }
 
-    if (check == '1' && time_list_school.length != 1) {
+    if (time_list_school.length != 1) {
       if (h1 == 0) return "후문정류장에서\n" + "$m1분 뒤 출발";
       return "후문정류장에서\n" + "$h1시간 $m1분 뒤 출발";
     }
@@ -216,7 +157,7 @@ class _BusHomeState extends State<BusHome> {
   String StationBusChangeTime() {
     var time_list_station = [];
     var not_time_list_station = [];
-    int min, not_min;
+    int min;
     var initM;
 
     double m, h;
@@ -225,19 +166,14 @@ class _BusHomeState extends State<BusHome> {
     for (int i = 0; i < this._datas2.length; i++) {
       String time = this._datas2[i].busTime;
 
-      // String time_list=this._datas[0]
       final splitted = time.split('T');
-      // print("신창역 셔틀 시간 : " + splitted[1]); //학내순환이니까 10분 간격으로 나옴
       DateTime formattedTime2 = DateFormat("hh:mm").parse(splitted[1]);
 
       DateTime now = DateTime.now();
       String formattedTime = DateFormat('kk:mm').format(now);
-      // print("신창역 셔틀 현재시간 : " + formattedTime);
       DateTime formattedTime1 = DateFormat("hh:mm").parse(formattedTime);
-      // print("formateedTime: " + formattedTime);
 
       Duration duration = formattedTime2.difference(formattedTime1);
-      // print(duration.inSeconds); //계산해서 나온 초
 
       if (duration.inSeconds >= 0) {
         time_list_station.add(duration.inSeconds);
@@ -247,10 +183,6 @@ class _BusHomeState extends State<BusHome> {
 
       not_time_list_station.add(duration.inSeconds);
     }
-
-    // print("데이터 정제 전 :");
-    // print(time_list); //모든 시간 넣은 리스트(데이터 정제 이전)
-    // print(not_time_list);
 
     String check = '0';
 
@@ -263,13 +195,9 @@ class _BusHomeState extends State<BusHome> {
         break;
       }
     }
-    // print("check: " + check);
     time_list_station.removeWhere((e) => e == null);
     time_list_station.add(1000000);
-    // print(time_list);
     min = time_list_station[0];
-    not_min = not_time_list_station[0];
-    // print(min); //가장 얼마 안남은 시간
 
     initM = min;
 
@@ -278,7 +206,6 @@ class _BusHomeState extends State<BusHome> {
     m = (initM % 3600) / 60;
     m1 = m.toInt();
 
-// if(initM==1000000)
     if (initM == 1000000) return "버스 운행이\n종료되었습니다";
     if (check == '1' && time_list_station.length != 1) {
       if (h1 == 0) return "후문정류장에서\n" + "$m1분 뒤 출발";
@@ -286,26 +213,6 @@ class _BusHomeState extends State<BusHome> {
     }
 
     return "버스 운행이\n종료되었습니다";
-    // String result = "$h1시간 $m1분 뒤 출발"; //남은 시간
-    // return result;
-  }
-
-  String changeDay() {
-    String day = getCurrentDay();
-    if (day == "월")
-      return "1";
-    else if (day == "화")
-      return "2";
-    else if (day == "수")
-      return "3";
-    else if (day == "목")
-      return "4";
-    else if (day == "금")
-      return "5";
-    else if (day == "토")
-      return "6";
-    else if (day == "일") return "0";
-    return "7";
   }
 
 //학내 순환 버스 시간 가져오기 GET
@@ -323,7 +230,6 @@ class _BusHomeState extends State<BusHome> {
       _datas.clear();
       _datas.addAll(parsedResponse);
     });
-    print(parsedResponse);
   }
 
   //신창역 셔틀 버스 시간 가져오기 GET
@@ -341,7 +247,6 @@ class _BusHomeState extends State<BusHome> {
       _datas2.clear();
       _datas2.addAll(parsedResponse);
     });
-    print(parsedResponse);
   }
 
   @override
@@ -385,7 +290,6 @@ class _BusHomeState extends State<BusHome> {
               SizedBox(
                 height: 15,
               ),
-              // 사각형 2 - 흰색 그림자
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -566,7 +470,6 @@ class _BusHomeState extends State<BusHome> {
                         topRight: Radius.circular(5))),
                 child: Column(
                   children: [
-                    // Text("후문정류장에서"),
                     FutureBuilder(
                         future: _fetch(),
                         builder:
@@ -574,7 +477,6 @@ class _BusHomeState extends State<BusHome> {
                           //해당 부분은 data를 아직 받아오지 못했을 떄 실행
                           if (snapshot.hasData == false) {
                             return Text("데이터를 받아오는 중...");
-                            // CircularProgressIndicator();
                           }
                           //error가 발생하게 될 경우 반환하게 되는 부분
                           else if (snapshot.hasError) {
@@ -591,15 +493,7 @@ class _BusHomeState extends State<BusHome> {
                               style: TextStyle(height: 2.2),
                             );
                           }
-                          // else if (time_list_refresh.isEmpty) {
-                          //   return Text(
-                          //     "버스가 없습니다",
-                          //     style: TextStyle(height: 2.2),
-                          //   );
-                          // }
-                          // else if (SchoolBusChangeTime() == "버스 없음") {
-                          //   return Text(SchoolBusChangeTime());
-                          // }
+
                           //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
                           else {
                             return Text(
@@ -607,7 +501,6 @@ class _BusHomeState extends State<BusHome> {
 
                           }
                         })
-                    // Text(this._datas[0].busTime) //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
                   ],
                 ),
               ),
@@ -657,7 +550,6 @@ class _BusHomeState extends State<BusHome> {
                         topRight: Radius.circular(5))),
                 child: Column(
                   children: [
-                    // Text("후문정류장에서"),
                     FutureBuilder(
                         future: _fetch2(),
                         builder:
@@ -665,7 +557,6 @@ class _BusHomeState extends State<BusHome> {
                           //해당 부분은 data를 아직 받아오지 못했을 떄 실행
                           if (snapshot.hasData == false) {
                             return Text("데이터를 받아오는 중...");
-                            // CircularProgressIndicator();
                           }
                           //error가 발생하게 될 경우 반환하게 되는 부분
                           else if (snapshot.hasError) {
@@ -682,22 +573,13 @@ class _BusHomeState extends State<BusHome> {
                               style: TextStyle(height: 2.2),
                             );
                           }
-                          // else if (time_list_station.isEmpty) {
-                          //   return Text(
-                          //     "버스가 없습니다",
-                          //     style: TextStyle(height: 2.2),
-                          //   );
-                          // }
                           //데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
                           else {
-                            // ChangeTime(); //몇 분 남았는지 가져오게 하는 함수
-
                             return Text(
                                 StationBusChangeTime()); //처음에 바로 datas에 데이터가 안들어가서 오류 뜸
 
                           }
                         })
-                    // Text(this._datas[0].busTime)
                   ],
                 ),
               ),
