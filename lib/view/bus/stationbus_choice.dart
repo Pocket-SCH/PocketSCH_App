@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:pocket_sch/view/bus/bus_Widget.dart';
 import 'package:pocket_sch/view/bus/get_bus.dart';
 import 'package:http/http.dart' as http;
 import 'package:pocket_sch/view/bus/bus_method.dart';
@@ -33,6 +34,7 @@ class _StationBusChoiceState extends State<StationBusChoice> {
 
   final List<Container> comments = <Container>[];
 
+  String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/1/";
   void initState() {
     super.initState();
     today = getCurrentDay();
@@ -213,80 +215,9 @@ class _StationBusChoiceState extends State<StationBusChoice> {
         ));
   }
 
-  Widget getAlarmBox(double screen_width, double screen_height) {
-    return SizedBox(
-      width: screen_width * 0.78,
-      height: screen_height * 0.07,
-      child: ElevatedButton.icon(
-        onPressed: () {
-          Get.toNamed('alarmAdd');
-        },
-        icon: Icon(Icons.alarm, size: 20),
-        label: Text("알람 추가",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w500)),
-        style: ElevatedButton.styleFrom(
-          primary: Color(0xffa4c9c9),
-        ),
-      ),
-    );
-  }
-
-  Widget getBusBox(String str1, String str2) {
-    double w = 335;
-    double h = 60;
-
-    return Container(
-      width: w,
-      height: h,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: [
-            BoxShadow(
-                color: const Color(0x29000000),
-                offset: Offset(0, 0),
-                blurRadius: 6,
-                spreadRadius: 0)
-          ],
-          color: Color(0xff87aaaa)),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 10,
-          ),
-          Container(
-            width: w * 0.4,
-            height: h,
-            child: Container(
-                margin: EdgeInsets.fromLTRB(0, 10, 10, 10),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(5),
-                        topLeft: Radius.circular(5))),
-                child: Center(child: Text(str1))),
-          ),
-          Container(
-            width: w * 0.5,
-            height: h,
-            child: Center(
-                child: Text(str2,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400))),
-          ),
-        ],
-      ),
-    );
-  }
-
 //신창역 셔틀 버스 시간 가져오기 GET
   Future StationBusGetRequest(String day) async {
-    String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/1/$day";
-    final Uri url = Uri.parse(api);
+    final Uri url = Uri.parse(api + "$day");
 
     final response = await http.get(url);
     _text = utf8.decode(response.bodyBytes);
@@ -302,8 +233,7 @@ class _StationBusChoiceState extends State<StationBusChoice> {
 
 //신창역 셔틀 버스 시간 가져오기 GET
   Future StationBusGetRequest1(String day) async {
-    String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/1/$day";
-    final Uri url = Uri.parse(api);
+    final Uri url = Uri.parse(api + "$day");
 
     final response = await http.get(url);
     _text1 = utf8.decode(response.bodyBytes);
@@ -537,11 +467,6 @@ class _StationBusChoiceState extends State<StationBusChoice> {
     rightmessage.removeAt(0);
     return rightmessage;
   }
-}
-
-Future<String> _fetch3() async {
-  await Future.delayed(Duration(seconds: 1));
-  return 'Call Data';
 }
 
 Future<String> _fetch4() async {

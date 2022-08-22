@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:pocket_sch/view/bus/bus_Widget.dart';
 import 'package:pocket_sch/view/bus/get_bus.dart';
 import 'package:http/http.dart' as http;
 import 'package:pocket_sch/view/bus/bus_method.dart';
@@ -33,6 +34,7 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
     });
   }
 
+  String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/0/";
   var busTime_list = [];
   var busTime_list1 = [];
 
@@ -174,27 +176,6 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
             ],
           ),
         ));
-  }
-
-  Widget getAlarmBox(double screen_width, double screen_height) {
-    return SizedBox(
-      width: screen_width * 0.78,
-      height: screen_height * 0.07,
-      child: ElevatedButton.icon(
-        onPressed: () {
-          Get.toNamed('alarmAdd');
-        },
-        icon: Icon(Icons.alarm, size: 20),
-        label: Text("알람 추가",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w500)),
-        style: ElevatedButton.styleFrom(
-          primary: Color(0xffa4c9c9),
-        ),
-      ),
-    );
   }
 
   final List<Container> comments = <Container>[];
@@ -456,8 +437,7 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
 
 //학내 순환 버스 시간 가져오기 GET
   Future SchoolBusGetRequest(String day) async {
-    String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/0/$day";
-    final Uri url = Uri.parse(api);
+    final Uri url = Uri.parse(api + "$day");
 
     final response = await http.get(url);
     _text = utf8.decode(response.bodyBytes);
@@ -473,8 +453,7 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
 
 //학내 순환 버스 시간 가져오기 GET
   Future SchoolBusGetRequest1(String day) async {
-    String api = "http://13.209.200.114:8080/pocket-sch/v1/bus/timelist/0/$day";
-    final Uri url = Uri.parse(api);
+    final Uri url = Uri.parse(api + "$day");
 
     final response = await http.get(url);
     _text1 = utf8.decode(response.bodyBytes);
@@ -487,11 +466,6 @@ class _SchoolBusChoiceState extends State<SchoolBusChoice> {
       _datas1.addAll(parsedResponse);
     });
   }
-}
-
-Future<String> _fetch3() async {
-  await Future.delayed(Duration(seconds: 1));
-  return 'Call Data';
 }
 
 Future<String> _fetch4() async {
