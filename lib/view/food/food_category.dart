@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pocket_sch/view/food/food_game_select.dart';
 import 'package:pocket_sch/view/food/food_slot.dart';
 import '../../custom_color.dart';
 
@@ -13,6 +14,7 @@ class FoodCategory extends StatefulWidget {
 
 class _FoodCategoryState extends State<FoodCategory> {
   int touchedIndex = -1;
+  String touchedString = '오늘은...';
 
   @override
   Widget build(BuildContext context) {
@@ -64,9 +66,10 @@ class _FoodCategoryState extends State<FoodCategory> {
                     child: Column(children: [
                       Expanded(
                         child: Stack(
+                          alignment: Alignment.center,
                           children: [
                             Center(
-                              child: Text('오늘은...',
+                              child: Text(touchedString,
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -77,22 +80,31 @@ class _FoodCategoryState extends State<FoodCategory> {
                                   pieTouchData: PieTouchData(touchCallback:
                                       (FlTouchEvent event, pieTouchResponse) {
                                     setState(() {
-                                      if (!event.isInterestedForInteractions ||
+                                      if ( //!event.isInterestedForInteractions ||
                                           pieTouchResponse == null ||
-                                          pieTouchResponse.touchedSection ==
-                                              null) {
+                                              pieTouchResponse.touchedSection ==
+                                                  null) {
                                         touchedIndex = -1;
                                         return;
                                       }
                                       touchedIndex = pieTouchResponse
                                           .touchedSection!.touchedSectionIndex;
 
+                                      touchedString = pieTouchResponse
+                                          .touchedSection!
+                                          .touchedSection!
+                                          .title;
+
                                       print('선택된 카테고리 인덱스 넘버: ' +
                                           touchedIndex.toString());
                                     });
+                                    /*
 
-                                    Get.off(() => FoodSlot(),
-                                        arguments: touchedIndex);
+                                    if (touchedIndex != -1) {
+                                      Get.off(() => FoodSlot(),
+                                          arguments: touchedIndex);
+                                    }
+                                    */
                                   }),
                                   borderData: FlBorderData(
                                     show: false,
@@ -101,6 +113,67 @@ class _FoodCategoryState extends State<FoodCategory> {
                                   centerSpaceRadius: screenWidth * 0.2,
                                   sections: showingSections()),
                             ),
+                            Positioned(
+                                bottom: Get.height * 0.07,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(top: 10),
+                                      width: Get.width * 0.6,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          print(touchedIndex);
+                                          if (touchedIndex != -1) {
+                                            Get.off(() => FoodGameSelection(),
+                                                arguments: touchedIndex);
+                                          }
+                                        },
+                                        child: Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                20, 5, 30, 5),
+                                            child: RichText(
+                                              text: TextSpan(
+                                                  children: const <TextSpan>[
+                                                    TextSpan(
+                                                        text: '게임 고르기',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 12))
+                                                  ]),
+                                            )),
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 10),
+                                      width: Get.width * 0.6,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          // foodCategory 기반 음식점 추천이면 여기
+                                          // 음식 id 기반 음식점 추천이면 food_slot_controller.dart으로
+                                        },
+                                        child: Padding(
+                                            padding: EdgeInsets.fromLTRB(
+                                                20, 5, 30, 5),
+                                            child: RichText(
+                                              text: TextSpan(
+                                                  children: const <TextSpan>[
+                                                    TextSpan(
+                                                        text: '추천 음식점',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 12))
+                                                  ]),
+                                            )),
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )),
                           ],
                         ),
                       )
