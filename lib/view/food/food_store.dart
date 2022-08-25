@@ -118,7 +118,7 @@ class _FoodStoreState extends State<FoodStore> {
                         ),
                         //
                         FutureBuilder(
-                            future: getData2(4),
+                            future: getData2(Get.arguments['id']),
                             builder:
                                 (BuildContext context, AsyncSnapshot snapshot) {
                               if (snapshot.hasData == false) {

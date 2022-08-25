@@ -20,6 +20,7 @@ class FoodSlotController implements Disposable {
   late List<String> _data;
   late Timer? _timer = null;
   late int selectedIndex = -1;
+  late List<int> _foodId = [];
 
   @override
   void dispose() {
@@ -120,7 +121,7 @@ class FoodSlotController implements Disposable {
                                   // 음식 id 기반으로 음식점 추천
                                   Get.off(() => FoodStore(), arguments: {
                                     'name': _data[selectedIndex],
-                                    'id': selectedIndex
+                                    'id': _foodId[selectedIndex]
                                   });
                                 },
                                 child: Text('추천 음식점')),
@@ -157,6 +158,7 @@ class FoodSlotController implements Disposable {
   //데이터를 받아오는 곧
   Future<List<String>> getData(int categoryId) async {
     List<String> tmp = [];
+    List<int> foodId = [];
 
     var headers = {'Authorization': '${Get.find<TokenController>().token}'};
     var request = http.Request(
@@ -177,12 +179,14 @@ class FoodSlotController implements Disposable {
       List list = data['data'];
       for (Map a in list) {
         tmp.add(a['name']);
+        foodId.add(a['id']);
       }
     } else {
       print(response.reasonPhrase);
     }
 
     _data = tmp;
+    _foodId = foodId;
     return tmp;
   }
 
