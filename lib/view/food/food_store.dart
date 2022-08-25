@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 //import 'dart:async';
 import 'dart:convert';
 import '../../controller/token_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FoodStore extends StatefulWidget {
   const FoodStore({Key? key}) : super(key: key);
@@ -124,18 +125,40 @@ class _FoodStoreState extends State<FoodStore> {
                               if (snapshot.hasData == false) {
                                 return CircularProgressIndicator();
                               } else {
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                                  child: ListTile(
-                                    title: Text(_data1[0],
-                                        style: TextStyle(fontSize: 18)),
-                                    trailing: IconButton(
-                                        onPressed: () {},
-                                        icon: Icon(
-                                          Icons.room,
-                                          size: 30,
-                                        )),
+                                List<String> tmp = snapshot.data;
+                                print(tmp);
+                                return Expanded(
+                                  child: Container(
+                                    child: ListView.builder(
+                                        itemCount: tmp.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                15, 0, 15, 0),
+                                            child: ListTile(
+                                              title: Text(tmp[index],
+                                                  style:
+                                                      TextStyle(fontSize: 18)),
+                                              trailing: IconButton(
+                                                  onPressed: () async {
+                                                    final url = Uri.parse(
+                                                        _data2[index]
+                                                            .toString());
+                                                    if (await canLaunchUrl(
+                                                        url)) {
+                                                      launchUrl(url);
+                                                    } else {
+                                                      print('실패다실패 다시다싣사ㅣ');
+                                                    }
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.room,
+                                                    size: 30,
+                                                  )),
+                                            ),
+                                          );
+                                        }),
                                   ),
                                 );
                               }

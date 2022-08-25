@@ -14,6 +14,7 @@ import '../../controller/solid_button_builder.dart';
 import '../../controller/token_controller.dart';
 import '../../custom_color.dart';
 import 'arrow.dart';
+import 'food_store.dart';
 
 class FoodRoulette extends StatefulWidget {
   const FoodRoulette({Key? key}) : super(key: key);
@@ -30,6 +31,7 @@ class _FoodRouletteState extends State<FoodRoulette>
   late ConfettiController _confettiController;
 
   late List<String> _data;
+  late List<int> _foodId = [];
   late List<Color> _color = [];
   int _selectedIndex = -1;
 
@@ -81,6 +83,7 @@ class _FoodRouletteState extends State<FoodRoulette>
   //데이터를 받아오는 곧
   Future<List<String>> getData(int categoryId) async {
     List<String> tmp = [];
+    List<int> foodId = [];
 
     var headers = {'Authorization': '${Get.find<TokenController>().token}'};
     var request = http.Request(
@@ -101,10 +104,12 @@ class _FoodRouletteState extends State<FoodRoulette>
       List list = data['data'];
       for (Map a in list) {
         tmp.add(a['name']);
+        foodId.add(a['id']);
       }
     } else {
       print(response.reasonPhrase);
     }
+    _foodId = foodId;
     return tmp;
   }
 
@@ -199,8 +204,6 @@ class _FoodRouletteState extends State<FoodRoulette>
                                             offset: _random.nextDouble());
                                         _confettiController.play();
                                         openDialog();
-
-                                        _selectedIndex = -1;
                                       },
                                     )),
                                   ],
@@ -309,19 +312,21 @@ class _FoodRouletteState extends State<FoodRoulette>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            /*
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   primary: CustomColor.mustard,
                                 ),
                                 onPressed: () {
                                   // 음식 id 기반으로 음식점 추천
+                                  Get.off(() => FoodStore(), arguments: {
+                                    'name': _data[_selectedIndex],
+                                    'id': _foodId[_selectedIndex]
+                                  });
                                 },
                                 child: Text('추천 음식점')),
                             SizedBox(
                               width: 10,
                             ),
-                            */
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   primary: CustomColor.primary,
