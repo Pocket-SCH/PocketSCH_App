@@ -20,7 +20,7 @@ class _FoodStoreState extends State<FoodStore> {
   List<String> _data1 = [""];
   List<String> _data2 = [""];
 
-  Future<List<String>> getData2(int categoryId) async {
+  Future<List<String>> getData2(int menuId) async {
     List<String> tmp1 = [];
     List<String> tmp2 = [];
 
@@ -29,7 +29,7 @@ class _FoodStoreState extends State<FoodStore> {
         'GET',
         Uri.parse(
             'http://13.209.200.114:8080/pocket-sch/v1/food/food-store-list/menu/' +
-                categoryId.toString()));
+                menuId.toString()));
 
     request.headers.addAll(headers);
 
