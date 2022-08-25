@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 
 import '../../controller/token_controller.dart';
 import '../../custom_color.dart';
+import 'food_store.dart';
 
 abstract class Disposable {
   void dispose();
@@ -111,19 +112,21 @@ class FoodSlotController implements Disposable {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            /*
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   primary: CustomColor.mustard,
                                 ),
                                 onPressed: () {
                                   // 음식 id 기반으로 음식점 추천
+                                  Get.off(() => FoodStore(), arguments: {
+                                    'name': _data[selectedIndex],
+                                    'id': selectedIndex
+                                  });
                                 },
                                 child: Text('추천 음식점')),
                             SizedBox(
                               width: 10,
                             ),
-                            */
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   primary: CustomColor.primary,
