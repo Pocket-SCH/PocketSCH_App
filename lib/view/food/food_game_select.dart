@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pocket_sch/view/food/food_roulette.dart';
 import 'package:pocket_sch/view/food/food_slot.dart';
 
 import '../../custom_color.dart';
@@ -57,61 +58,91 @@ class _FoodGameSelectionState extends State<FoodGameSelection> {
                         width: 1,
                       ),
                     ),
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: Get.height * 0.2,
-                            width: Get.width * 0.3,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Get.to(() => FoodSlot(),
-                                    arguments: Get.arguments);
-                              },
-                              child: Center(
-                                  child: Column(
+                    child: Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        Positioned(
+                            top: Get.height * 0.2,
+                            child: Text(
+                              '종류',
+                              style: TextStyle(
+                                  fontSize: 25, fontWeight: FontWeight.bold),
+                            )),
+                        Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Image(
-                                      fit: BoxFit.contain,
-                                      image:
-                                          AssetImage('assets/logo_slot.png')),
+                                  Container(
+                                    height: Get.height * 0.25,
+                                    width: Get.width * 0.4,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Get.to(() => FoodSlot(),
+                                            arguments: Get.arguments);
+                                      },
+                                      child: Center(
+                                          child: Container(
+                                        height: Get.height * 0.2,
+                                        width: Get.width * 0.2,
+                                        child: Image(
+                                            fit: BoxFit.contain,
+                                            color: Colors.white,
+                                            image: AssetImage(
+                                                'assets/logo_slot.png')),
+                                      )),
+                                      style: ElevatedButton.styleFrom(
+                                          primary: CustomColor.primaryDeepNoti,
+                                          shape: CircleBorder()),
+                                    ),
+                                  ),
                                   Text(
                                     '슬롯머신',
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 15),
+                                    style: TextStyle(fontSize: 18),
                                   )
                                 ],
-                              )),
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.white,
                               ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Container(
-                            height: Get.height * 0.2,
-                            width: Get.width * 0.3,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // foodCategory 기반 음식점 추천이면 여기
-                                // 음식 id 기반 음식점 추천이면 food_slot_controller.dart으로
-                              },
-                              child: Padding(
-                                  padding: EdgeInsets.fromLTRB(20, 5, 30, 5),
-                                  child: Text('추천 음식점',
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 12))),
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.white,
+                              SizedBox(
+                                width: 15,
                               ),
-                            ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: Get.height * 0.25,
+                                    width: Get.width * 0.4,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Get.to(() => FoodRoulette(),
+                                            arguments: Get.arguments);
+                                      },
+                                      child: Center(
+                                          child: Container(
+                                        height: Get.height * 0.2,
+                                        width: Get.width * 0.2,
+                                        child: Image(
+                                            fit: BoxFit.contain,
+                                            color: Colors.white,
+                                            image: AssetImage(
+                                                'assets/logo_roulette.png')),
+                                      )),
+                                      style: ElevatedButton.styleFrom(
+                                          primary: CustomColor.primary,
+                                          shape: CircleBorder()),
+                                    ),
+                                  ),
+                                  Text(
+                                    '룰렛',
+                                    style: TextStyle(fontSize: 18),
+                                  )
+                                ],
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

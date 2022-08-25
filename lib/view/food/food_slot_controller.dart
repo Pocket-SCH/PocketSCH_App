@@ -111,6 +111,7 @@ class FoodSlotController implements Disposable {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            /*
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   primary: CustomColor.mustard,
@@ -122,6 +123,7 @@ class FoodSlotController implements Disposable {
                             SizedBox(
                               width: 10,
                             ),
+                            */
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   primary: CustomColor.primary,

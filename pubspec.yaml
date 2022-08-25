@@ -52,6 +52,7 @@ dependencies:
 
   fl_chart: ^0.55.1
   confetti: ^0.7.0
+  roulette: ^0.1.2
 
 
 dev_dependencies:

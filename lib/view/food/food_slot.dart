@@ -46,7 +46,7 @@ class _FoodSlotState extends State<FoodSlot> {
             leading: IconButton(
               icon: Image.asset('assets/btn_back.png',
                   color: Color.fromARGB(255, 0, 0, 0), width: 15),
-              onPressed: () => Get.off(() => FoodCategory()),
+              onPressed: () => Get.back(),
             ),
           ),
           body: Padding(

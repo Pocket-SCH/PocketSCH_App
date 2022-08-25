@@ -90,13 +90,19 @@ class _FoodCategoryState extends State<FoodCategory> {
                                       touchedIndex = pieTouchResponse
                                           .touchedSection!.touchedSectionIndex;
 
-                                      touchedString = pieTouchResponse
-                                          .touchedSection!
-                                          .touchedSection!
-                                          .title;
+                                      if (pieTouchResponse
+                                              .touchedSection!.touchedSection ==
+                                          null) {
+                                        touchedString = "오늘은...";
+                                      } else {
+                                        touchedString = pieTouchResponse
+                                            .touchedSection!
+                                            .touchedSection!
+                                            .title;
+                                      }
 
-                                      print('선택된 카테고리 인덱스 넘버: ' +
-                                          touchedIndex.toString());
+                                      //print('선택된 카테고리 인덱스 넘버: ' +
+                                      //    touchedIndex.toString());
                                     });
                                     /*
 
@@ -114,7 +120,7 @@ class _FoodCategoryState extends State<FoodCategory> {
                                   sections: showingSections()),
                             ),
                             Positioned(
-                                bottom: Get.height * 0.07,
+                                bottom: Get.height * 0.1,
                                 child: Column(
                                   children: [
                                     Container(
@@ -124,7 +130,7 @@ class _FoodCategoryState extends State<FoodCategory> {
                                         onPressed: () {
                                           print(touchedIndex);
                                           if (touchedIndex != -1) {
-                                            Get.off(() => FoodGameSelection(),
+                                            Get.to(() => FoodGameSelection(),
                                                 arguments: touchedIndex);
                                           }
                                         },
@@ -146,6 +152,9 @@ class _FoodCategoryState extends State<FoodCategory> {
                                         ),
                                       ),
                                     ),
+
+                                    // 추후 추천 음식점 추가 시 등록 예정
+                                    /*
                                     Container(
                                       margin: EdgeInsets.only(top: 10),
                                       width: Get.width * 0.6,
@@ -172,6 +181,7 @@ class _FoodCategoryState extends State<FoodCategory> {
                                         ),
                                       ),
                                     ),
+                                    */
                                   ],
                                 )),
                           ],
